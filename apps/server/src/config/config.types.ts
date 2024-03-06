@@ -21,6 +21,12 @@ type DefaultsMap<Vens extends GenericVendor> = {
     : never;
 };
 
+export type VendorMergedMap<Vens extends GenericVendor> = {
+  [K in Vens['vendorId']]: Vens extends WithVendorID<K>
+    ? Vens['merged']
+    : never;
+};
+
 export interface VendorsConfig<
   Vens extends GenericVendor,
   VendMap = DefaultsMap<Vens>,
@@ -28,9 +34,3 @@ export interface VendorsConfig<
   vendors: VendMap;
   sources: Array<Vens['configItem']>;
 }
-
-export type AllVendorsConfigMerged<Vens extends GenericVendor> = {
-  [K in Vens['vendorId']]: Vens extends WithVendorID<K>
-    ? Vens['merged']
-    : never;
-};

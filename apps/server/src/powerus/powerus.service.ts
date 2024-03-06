@@ -1,29 +1,13 @@
 import { Injectable } from '@nestjs/common';
-// import { PowerusConfig } from './powerus.types';
-// import { again } from '../lib/again';
+import { VendorsService } from '../vendors/vendors.service';
+import { selectFlights } from './selectFlights';
+import { fetchOneSource } from './fetchOneSource';
 
 @Injectable()
 export class PowerusService {
-  // Inject configs
+  constructor(private readonly vnd: VendorsService) {}
 
-  getHello(): string {
-    return 'Hello World!';
+  async fetchAllFlights() {
+    return selectFlights(this.vnd.getByVendorId('powerUs'), fetchOneSource);
   }
-
-  // async fetchPowerus(cfg: PowerusConfig['merged']) {
-  //   const retries =
-  //     cfg.fetchAttempts === undefined || cfg.fetchAttempts < 2
-  //       ? 1
-  //       : cfg.fetchAttempts - 1;
-  //   return again(() => fetch(cfg.url), {
-  //     retries,
-  //     backoff: cfg.fetchBackoff,
-  //     timeout: cfg.fetchTimeout,
-  //   })
-  //     .then(res => res.json())
-  //     .catch((e: unknown) => {
-  //       console.error(`Failed to fetch ${JSON.stringify(cfg)}`, e);
-  //       throw e;
-  //     });
-  // }
 }

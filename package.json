@@ -25,6 +25,7 @@
   "homepage": "https://github.com/maxim-grishaev/fly-src#readme",
   "dependencies": {
     "@nestjs/cli": "^10.3.2",
+    "@nestjs/config": "^3.2.0",
     "nx": "^18.0.7"
   },
   "devDependencies": {

@@ -9,6 +9,7 @@ async function main() {
   );
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    snapshot: true,
   });
   await app.listen(PORT);
 }

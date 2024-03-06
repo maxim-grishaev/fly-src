@@ -1,8 +1,4 @@
-import {
-  GenericVendor,
-  VendorsConfig,
-  AllVendorsConfigMerged,
-} from '../config/config.types';
+import { GenericVendor, VendorsConfig } from '../config/config.types';
 
 /**
  * Merges config into plain array if items. Handles TS magic
@@ -11,13 +7,11 @@ import {
  */
 export const mergeConfig = <T extends GenericVendor>(
   config: VendorsConfig<T>,
-) =>
-  config.sources.reduce((acc, src) => {
+): Array<T['merged']> =>
+  config.sources.map(src => {
     const id = src.vendorId as T['vendorId'];
-    const merged = {
+    return {
       ...config.vendors[id],
       ...src,
-    } as AllVendorsConfigMerged<T>[typeof id];
-    acc[id] = merged;
-    return acc;
-  }, {} as AllVendorsConfigMerged<T>);
+    };
+  });

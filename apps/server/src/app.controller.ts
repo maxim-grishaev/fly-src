@@ -1,24 +1,24 @@
 import { Controller, Get } from '@nestjs/common';
 import { PowerusService } from './powerus/powerus.service';
+import { getId, normaliseArray } from './lib/normaliseArray';
+import { HelloService } from './hello/hello.service';
 
 @Controller()
-export class AppController {
-  constructor(private readonly pwrUs: PowerusService) {}
+export class RootController {
+  constructor(
+    private readonly pwrUs: PowerusService,
+    private readonly hello: HelloService,
+  ) {}
 
-  @Get()
-  getHello(): string {
-    return this.pwrUs.getHello();
+  @Get('hello')
+  helloWorld(): string {
+    return this.hello.world();
   }
 
-  // @Get('s1')
-  // async getS1(): Promise<string> {
-  //   return await this.pwrUs
-  //     .fetchPowerus({
-  //       vendorId: 'powerus',
-  //       url: 'https://coding-challenge.powerus.de/flight/source1',
-  //       cacheTTL: 60 * 60 * 1000, // 1h
-  //       fetchAttempts: 3,
-  //     })
-  //     .then(JSON.stringify);
-  // }
+  @Get()
+  async getPowerUs(): Promise<string> {
+    const allFlights = await this.pwrUs.fetchAllFlights();
+    const normData = normaliseArray(allFlights, getId);
+    return JSON.stringify(normData, null, 2);
+  }
 }

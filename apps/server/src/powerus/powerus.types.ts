@@ -35,7 +35,7 @@ interface PowerusConfigSource {
 }
 
 export type PowerusConfig = Vendor<
-  'powerus',
+  'powerUs',
   PowerusConfigDefaults,
   PowerusConfigSource
 >;

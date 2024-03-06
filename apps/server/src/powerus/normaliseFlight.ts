@@ -6,11 +6,10 @@ import { PowerusRespSlice } from './powerus.types';
 export const normaliseFlight = (
   data: PowerusRespSlice,
   price: number,
+  cacheTTL: number,
 ): Flight => {
   const id = crypto
-    .createHash('shake256', {
-      outputLength: 8,
-    })
+    .createHash('sha1')
     .update(
       [
         data.flight_number,
@@ -19,17 +18,20 @@ export const normaliseFlight = (
         data.destination_name,
       ].join('\n'),
     )
-    .digest('hex');
+    .digest('hex')
+    .substring(0, 10);
 
   return {
     id,
-    source: 'powerus',
+    source: 'powerUs',
     price: toMonetary(price, 'EUR'),
     arrivalTime: new Date(data.arrival_date_time_utc),
     departureTime: new Date(data.departure_date_time_utc),
-    duration: data.duration,
+    flightDuration: data.duration,
     flightNumber: data.flight_number,
     fromPlace: data.origin_name,
     toPlace: data.destination_name,
+    validUntil: new Date(Date.now() + cacheTTL),
+    cacheTTL,
   };
 };
