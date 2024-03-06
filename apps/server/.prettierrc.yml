@@ -1,0 +1,5 @@
+# basic config is in .editorconfig
+# https://prettier.io/docs/en/configuration.html#editorconfig
+singleQuote: true
+trailingComma: 'all'
+arrowParens: 'avoid'

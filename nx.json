@@ -1,0 +1,49 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "affected": {
+    "defaultBase": "main"
+  },
+  "workspaceLayout": {
+    "libsDir": "libs",
+    "appsDir": "apps"
+  },
+  "namedInputs": {
+    "global-config": ["nx.json"],
+    "lint-config": [
+      "{projectRoot}/.editorconfig",
+      "{projectRoot}/.prettierrc.yml"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build", "global-config"]
+    },
+    "start": {
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "dependsOn": ["build", "lint-config"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["build"]
+    }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test",
+        "buildTargetName": "build",
+        "devTargetName": "dev",
+        "startTargetName": "start"
+      }
+    }
+  ]
+}
