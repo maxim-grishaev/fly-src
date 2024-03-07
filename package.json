@@ -9,6 +9,7 @@
     "libs/*"
   ],
   "scripts": {
+    "build": "nx run-many --all --target=build",
     "test": "nx run-many --all --target=test",
     "dev": "nx run @fly-src/server:start:dev",
     "start": "nx run @fly-src/server:start"

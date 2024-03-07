@@ -1,29 +1,39 @@
-import { Flight } from './flight.type';
+import { Ticket } from './flight.type';
 
-export const MOCK_FLIGHT_1: Flight = {
-  id: '1',
+export const MOCK_FLIGHT_1: Ticket = {
+  id: 't_1',
   vendorId: 'foo',
-  validUntil: new Date(500),
-  departureTime: new Date(100),
-  arrivalTime: new Date(200),
+  items: [
+    {
+      id: 'f_1',
+      fromPlace: 'A',
+      fromTime: new Date(100).toISOString(),
+      toPlace: 'B',
+      toTime: new Date(200).toISOString(),
+      flightDuration: 100,
+      flightNumber: 'X1',
+    },
+  ],
   cacheTTL: 1000,
-  flightDuration: 100,
-  flightNumber: 'X1',
-  fromPlace: 'A',
-  toPlace: 'B',
+  validUntil: new Date(500).toISOString(),
   price: { currency: 'EUR', price: '10.00' },
 };
 
-export const MOCK_FLIGHT_2: Flight = {
+export const MOCK_FLIGHT_2: Ticket = {
   id: '2',
   vendorId: 'bar',
-  validUntil: new Date(500),
-  departureTime: new Date(100),
-  arrivalTime: new Date(200),
+  items: [
+    {
+      id: 'f_2',
+      fromPlace: 'B',
+      fromTime: new Date(200).toISOString(),
+      toPlace: 'A',
+      toTime: new Date(100).toISOString(),
+      flightDuration: 100,
+      flightNumber: 'X2',
+    },
+  ],
   cacheTTL: 1000,
-  flightDuration: 100,
-  flightNumber: 'X2',
-  fromPlace: 'A',
-  toPlace: 'B',
+  validUntil: new Date(500).toISOString(),
   price: { currency: 'EUR', price: '10.00' },
 };

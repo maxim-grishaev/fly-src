@@ -1,6 +1,6 @@
 import { S1 } from './fixture.mock';
 import {
-  normaliseFlight,
+  normaliseTicket,
   normaliseFlightResponse,
 } from './normaliseFlightResponse';
 
@@ -36,7 +36,7 @@ afterAll(() => {
 
 describe('normaliseFlight', () => {
   it('should normalise the response', () => {
-    const result = normaliseFlight(
+    const result = normaliseTicket(
       S1.flights[0].slices[0],
       S1.flights[0].price,
       60 * 60 * 1000,

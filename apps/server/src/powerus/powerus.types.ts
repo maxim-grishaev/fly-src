@@ -27,4 +27,8 @@ interface PowerusConfigSource {
   url: string;
 }
 
-export type PowerusConfig = Vendor<'powerUs', PowerusConfigSource>;
+export type PowerusConfig = Vendor<
+  'powerUs',
+  PowerusConfigSource,
+  { cacheTTL: number }
+>;

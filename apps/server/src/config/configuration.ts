@@ -2,10 +2,11 @@ import { PowerusConfig } from '../powerus/powerus.types';
 import { Vendor, VendorMergedMap, VendorsConfig } from './config.types';
 
 // TODO: remove this
-type TestConfig = Vendor<'testVnd', { testPropItem: 'b' }, { testPropDflt: 1 }>;
-
-// type CfgOrig = ReturnType<typeof getVendorConfig>;
-// export type ConcreteVensdorsSrc = CfgOrig extends VendorsConfig<infer U> ? U : never;
+type TestConfig = Vendor<
+  'testVnd',
+  { testPropItem: string },
+  { testPropDflt: number }
+>;
 
 export type ConcreteVensdorsCfgSrc = PowerusConfig | TestConfig;
 export type ConcreteVensdorId = ConcreteVensdorsCfgSrc['vendorId'];
@@ -21,16 +22,15 @@ export const getVendorConfig = (): VendorsConfig<ConcreteVensdorsCfgSrc> => ({
   vendors: {
     testVnd: {
       testPropDflt: 1,
-      cacheTTL: HOUR,
+      refteshAfterMs: 10 * SEC,
       retryAttempts: 0,
-      refteshOverlapMs: 5 * MIN,
       timeout: SEC,
     },
     powerUs: {
       cacheTTL: HOUR,
-      refteshOverlapMs: 5 * MIN,
+      refteshAfterMs: 55 * MIN,
       retryAttempts: 2,
-      retryBackoff: SEC / 2,
+      retryBackoff: SEC,
       timeout: 5 * SEC,
     },
   },
@@ -42,6 +42,10 @@ export const getVendorConfig = (): VendorsConfig<ConcreteVensdorsCfgSrc> => ({
     {
       vendorId: 'powerUs',
       url: 'https://coding-challenge.powerus.de/flight/source2',
+    },
+    {
+      vendorId: 'testVnd',
+      testPropItem: 'some text',
     },
   ],
 });

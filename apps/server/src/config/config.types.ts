@@ -3,8 +3,7 @@ export interface WithVendorID<T extends string> {
 }
 
 export interface SchedulerConfig {
-  cacheTTL: number;
-  refteshOverlapMs: number;
+  refteshAfterMs: number;
   timeout: number;
   retryAttempts?: number;
   retryBackoff?: number;

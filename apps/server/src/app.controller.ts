@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { DatabaseService } from './database/database.service';
-import { getId, normaliseArray } from './lib/normaliseArray';
+import { getId, createIdTableByArray } from './lib/IdTable';
 
 @Controller()
 export class RootController {
@@ -9,6 +9,6 @@ export class RootController {
   @Get()
   async getFlights() {
     const allFlights = await this.db.readAllValidFlights();
-    return normaliseArray(allFlights, getId);
+    return createIdTableByArray(allFlights, getId);
   }
 }

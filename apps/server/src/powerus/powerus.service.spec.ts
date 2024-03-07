@@ -52,9 +52,8 @@ describe(PowerusService.name, () => {
         },
       ],
     });
-    await expect(
-  service.fetchSource('abc', 333)
-).resolves.toMatchInlineSnapshot(`
+    await expect(service.fetchSource('abc', 333)).resolves
+      .toMatchInlineSnapshot(`
 [
   {
     "arrivalTime": 2021-01-01T00:00:00.000Z,

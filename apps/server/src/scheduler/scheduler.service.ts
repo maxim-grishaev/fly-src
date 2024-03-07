@@ -1,32 +1,18 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { PowerusService } from '../powerus/powerus.service';
 import {
   ConcreteVensdorConfig,
   getVendorConfig,
 } from '../config/configuration';
 import { mergeConfig } from '../config/mergeConfig';
-import { Flight } from '../flight/flight.type';
-import { DatabaseService } from '../database/database.service';
-import { assertUnreachable } from '../lib/assertUnreachable';
 import { again } from '../lib/again';
-
-type FetchFlightsFn = () => Promise<Flight[]>;
-const getRetriesByAttempts = (attempts: number | undefined) =>
-  attempts === undefined || attempts < 2 ? 0 : attempts;
-
-type DebugLog = (msg: string, data?: unknown) => void;
-type Ctx = { debug: DebugLog };
+import { AsyncTask, TaskerService } from './tasker.service';
 
 @Injectable()
 export class SchedulerService implements OnModuleInit {
   private cfg = mergeConfig(getVendorConfig());
   private readonly logger: Logger;
 
-  constructor(
-    // TODO: implement
-    private readonly dbSvc: DatabaseService,
-    private readonly vndPwrUs: PowerusService,
-  ) {
+  constructor(private readonly taskSvc: TaskerService) {
     this.logger = new Logger(SchedulerService.name);
   }
 
@@ -37,73 +23,45 @@ export class SchedulerService implements OnModuleInit {
     this.logger.log('onModuleInit', SchedulerService.name);
 
     await Promise.allSettled(
-      this.cfg.map((cfg, idx) =>
-        this.prefetchByCfg(cfg, [cfg.vendorId, idx].join(': ')),
-      ),
+      this.cfg.map((cfg, idx) => this.initAsyncTaskByCfg(cfg, idx)),
     );
   }
 
   /**
    * Fetches flights one cofig from one config item and schedules future fetches
    */
-  prefetchByCfg(cfg: ConcreteVensdorConfig, debugId: string) {
-    const debugLog: DebugLog = (msg, data) =>
-      this.logger.log(
-        `[${debugId}] ${msg} ${data ? JSON.stringify(data) : ''}`,
-      );
-    const ctx = { debug: debugLog };
-
-    const fetchFlights = this.createFlightsFetcher(cfg, ctx);
-    const fetchAndLog = () => {
-      ctx.debug('Fetching');
-      return fetchFlights();
-    };
-
-    return this.prefetchByFn(fetchAndLog, cfg, ctx);
+  private async initAsyncTaskByCfg(cfg: ConcreteVensdorConfig, idx: number) {
+    const task = this.taskSvc.createAsyncTask(cfg, idx);
+    await this.prefetch(task);
+    this.schedule(task);
   }
 
-  async prefetchByFn(fn: FetchFlightsFn, cfg: ConcreteVensdorConfig, ctx: Ctx) {
-    ctx.debug('prefetch');
-    const data = await this.callWithRetry(fn, cfg, ctx);
-    await this.dbSvc.writeManyFlights(data);
-    ctx.debug('prefetch OK!');
-    void this.schedule(fn, cfg, ctx);
-    return true;
-  }
-
-  /**
-   * Fetches flights from one config item with retries stated in config
-   */
-  async callWithRetry(
-    fn: FetchFlightsFn,
-    cfg: ConcreteVensdorConfig,
-    ctx: Ctx,
-  ): Promise<Flight[]> {
-    ctx.debug('callWithRetry');
-    return again(fn, {
-      retries: getRetriesByAttempts(cfg.retryAttempts ?? 2),
-      backoff: cfg.retryBackoff,
-      timeout: cfg.timeout,
+  private async runTask(task: AsyncTask) {
+    return await again(task.run, {
+      retries: task.cfg.retryAttempts,
+      backoff: task.cfg.retryBackoff,
+      timeout: task.cfg.timeout,
     });
   }
 
-  schedule(fn: FetchFlightsFn, cfg: ConcreteVensdorConfig, ctx: Ctx) {
-    // TODO: implement error handling, etc
-    ctx.debug('Scheduled', { ttl: cfg.cacheTTL - cfg.refteshOverlapMs });
-    setInterval(fn, cfg.cacheTTL - cfg.refteshOverlapMs);
+  private async prefetch(task: AsyncTask) {
+    this.logger.log(task.msg('Prefetch'));
+    await this.runTask(task)
+      .then(() => this.logger.debug(task.msg('Prefetch OK!')))
+      .catch(err => this.logger.warn(task.msg('Prefetch failed', err)));
   }
 
-  createFlightsFetcher(cfg: ConcreteVensdorConfig, ctx: Ctx): FetchFlightsFn {
-    const { vendorId } = cfg;
-    switch (vendorId) {
-      case 'powerUs':
-        ctx.debug('createFlightsFetcher', { url: cfg.url });
-        return () => this.vndPwrUs.fetchSource(cfg.url, cfg.cacheTTL);
-      case 'testVnd':
-        ctx.debug('createFlightsFetcher');
-        return () => Promise.resolve([]);
-      default:
-        return assertUnreachable(vendorId, 'Unknown vendorId');
-    }
+  // TODO: cancellation
+  private schedule(task: AsyncTask) {
+    const update = async () => {
+      this.logger.debug(task.msg('Run scheduled task...'));
+      await this.runTask(task)
+        .then(() => this.logger.log(task.msg('Scheduled task OK!')))
+        .catch(err => this.logger.warn(task.msg('Scheduled task failed', err)))
+        .finally(() => this.schedule(task));
+    };
+
+    this.logger.verbose(task.msg('Schedule task', task.cfg.refteshAfterMs));
+    setTimeout(update, task.cfg.refteshAfterMs);
   }
 }

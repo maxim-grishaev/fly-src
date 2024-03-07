@@ -1,17 +1,20 @@
 import { WithVendorID } from '../config/config.types';
 import { Monetary } from '../lib/toMonetary';
 
-export interface Flight<V extends string = string> extends WithVendorID<V> {
+export interface TicketFlight {
   id: string;
-
-  price: Monetary;
   fromPlace: string;
+  fromTime: string;
   toPlace: string;
-  departureTime: Date;
-  arrivalTime: Date;
+  toTime: string;
   flightDuration: number;
   flightNumber: string;
+}
 
+export interface Ticket<V extends string = string> extends WithVendorID<V> {
+  id: string;
+  price: Monetary;
+  items: TicketFlight[];
   cacheTTL: number;
-  validUntil: Date;
+  validUntil: string;
 }

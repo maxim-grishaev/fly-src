@@ -1,14 +1,14 @@
-export interface NormalArray<T, ID extends keyof any> {
+export interface IdTable<T, ID extends keyof any> {
   byId: Record<ID, T>;
   ids: ID[];
 }
 
 export const getId = <ID extends string | number>(item: { id: ID }) => item.id;
 
-export const normaliseArray = <T, ID extends keyof any>(
+export const createIdTableByArray = <T, ID extends keyof any>(
   arr: T[],
   getId: (item: T) => ID,
-): NormalArray<T, ID> => {
+): IdTable<T, ID> => {
   const ids = new Array<ID>(arr.length);
   const byId = arr.reduce(
     (acc, item, idx) => {
@@ -24,4 +24,17 @@ export const normaliseArray = <T, ID extends keyof any>(
     byId,
     ids: arr.map(getId),
   };
+};
+
+export const writeToIdTable = <T, ID extends keyof any>(
+  table: IdTable<T, ID>,
+  getId: (it: T) => ID,
+  item: T,
+) => {
+  const id = getId(item);
+  const hasItem = id in table.byId;
+  if (!hasItem) {
+    table.ids.push(id);
+  }
+  table.byId[id] = item;
 };
