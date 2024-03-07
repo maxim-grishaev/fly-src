@@ -26,8 +26,8 @@ exports[`normaliseResponse should normalise response 1`] = `
     ],
     "id": "7bc756ad54",
     "price": {
+      "amount": "129.00",
       "currency": "EUR",
-      "price": "129.00",
     },
     "validUntil": "1970-01-01T01:00:00.123Z",
     "vendorId": "powerUs",
@@ -56,8 +56,8 @@ exports[`normaliseResponse should normalise response 1`] = `
     ],
     "id": "e5d7896f5a",
     "price": {
+      "amount": "134.81",
       "currency": "EUR",
-      "price": "134.81",
     },
     "validUntil": "1970-01-01T01:00:00.123Z",
     "vendorId": "powerUs",
@@ -86,8 +86,8 @@ exports[`normaliseResponse should normalise response 1`] = `
     ],
     "id": "d3250c730e",
     "price": {
+      "amount": "134.81",
       "currency": "EUR",
-      "price": "134.81",
     },
     "validUntil": "1970-01-01T01:00:00.123Z",
     "vendorId": "powerUs",
@@ -116,8 +116,8 @@ exports[`normaliseResponse should normalise response 1`] = `
     ],
     "id": "56984df205",
     "price": {
+      "amount": "147.90",
       "currency": "EUR",
-      "price": "147.90",
     },
     "validUntil": "1970-01-01T01:00:00.123Z",
     "vendorId": "powerUs",
@@ -146,8 +146,8 @@ exports[`normaliseResponse should normalise response 1`] = `
     ],
     "id": "8fa903ad50",
     "price": {
+      "amount": "147.90",
       "currency": "EUR",
-      "price": "147.90",
     },
     "validUntil": "1970-01-01T01:00:00.123Z",
     "vendorId": "powerUs",

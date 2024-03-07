@@ -16,7 +16,7 @@ export const MOCK_FLIGHT_1: Ticket = {
   ],
   cacheTTL: 1000,
   validUntil: new Date(500).toISOString(),
-  price: { currency: 'EUR', price: '10.00' },
+  price: { currency: 'EUR', amount: '10.00' },
 };
 
 export const MOCK_FLIGHT_2: Ticket = {
@@ -35,5 +35,5 @@ export const MOCK_FLIGHT_2: Ticket = {
   ],
   cacheTTL: 1000,
   validUntil: new Date(500).toISOString(),
-  price: { currency: 'EUR', price: '10.00' },
+  price: { currency: 'EUR', amount: '10.00' },
 };

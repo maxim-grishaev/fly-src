@@ -7,12 +7,12 @@ const prescMap: Record<Currency, number> = {
 };
 
 export type Monetary = {
-  price: string;
+  amount: string;
   currency: Currency;
 };
 
 // TODO: Use int / monetary types like dinero.js
 export const toMonetary = (price: number, currency: Currency): Monetary => ({
-  price: price.toFixed(prescMap[currency]),
+  amount: price.toFixed(prescMap[currency]),
   currency,
 });

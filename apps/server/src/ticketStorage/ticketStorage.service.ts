@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Ticket } from '../flight/flight.type';
 import { getId, createIdTableByArray, writeToIdTable } from '../lib/IdTable';
 
+// Comments are for illustration purposes only
+// It shows can we normalise / denormalise data, for example to store it in a (relational) database
 // interface Link {
 //   ticketId: string;
 //   flightId: string;

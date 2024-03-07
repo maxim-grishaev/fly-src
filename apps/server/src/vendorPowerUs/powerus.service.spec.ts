@@ -3,6 +3,7 @@ import { PowerusService } from './powerus.service';
 import * as pfs from './fetchSource';
 
 jest.spyOn(pfs, 'fetchSource').mockResolvedValue({ flights: [] });
+
 const nowOrig = Date.now;
 const mockNow = jest.fn().mockReturnValue(123);
 Date.now = mockNow;
@@ -52,8 +53,8 @@ describe(PowerusService.name, () => {
         },
       ],
     });
-    await expect(service.fetchSource('abc', 333)).resolves
-      .toMatchInlineSnapshot(`
+    await expect(service.fetchSource('abc', 333)).resolves.
+toMatchInlineSnapshot(`
 [
   {
     "cacheTTL": 333,
@@ -79,8 +80,8 @@ describe(PowerusService.name, () => {
     ],
     "id": "cbc7dd2f0e",
     "price": {
+      "amount": "123.00",
       "currency": "EUR",
-      "price": "123.00",
     },
     "validUntil": "1970-01-01T00:00:00.456Z",
     "vendorId": "powerUs",

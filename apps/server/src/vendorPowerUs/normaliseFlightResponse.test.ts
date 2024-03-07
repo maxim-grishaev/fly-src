@@ -45,8 +45,8 @@ describe('normaliseFlight', () => {
   ],
   "id": "7bc756ad54",
   "price": {
+    "amount": "129.00",
     "currency": "EUR",
-    "price": "129.00",
   },
   "validUntil": "1970-01-01T01:00:00.123Z",
   "vendorId": "powerUs",
