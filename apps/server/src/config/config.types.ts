@@ -2,22 +2,35 @@ export interface WithVendorID<T extends string> {
   vendorId: T;
 }
 
+export interface SchedulerConfig {
+  cacheTTL: number;
+  refteshOverlapMs: number;
+  timeout: number;
+  retryAttempts?: number;
+  retryBackoff?: number;
+}
+
 export interface Vendor<
   ID extends string,
-  Dflt extends object,
   Item extends object,
+  Dflt extends object = object,
 > extends WithVendorID<ID> {
   rawDflt: Dflt;
   rawItem: Item;
-  configItem: WithVendorID<ID> & Item & Partial<Dflt>;
-  merged: WithVendorID<ID> & Dflt & Item;
+
+  dfltItem: Dflt & SchedulerConfig;
+  configItem: WithVendorID<ID> &
+    Item &
+    Partial<Dflt> &
+    Partial<SchedulerConfig>;
+  merged: WithVendorID<ID> & Dflt & Item & SchedulerConfig;
 }
 
-export type GenericVendor = Vendor<string, object, object>;
+export type GenericVendor = Vendor<string, object>;
 
 type DefaultsMap<Vens extends GenericVendor> = {
   [K in Vens['vendorId']]: Vens extends WithVendorID<K>
-    ? Vens['rawDflt']
+    ? Vens['dfltItem']
     : never;
 };
 

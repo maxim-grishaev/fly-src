@@ -23,19 +23,8 @@ export interface PowerusResp {
   flights: PowerusRespFlight[];
 }
 
-interface PowerusConfigDefaults {
-  cacheTTL: number;
-  fetchAttempts?: number;
-  fetchBackoff?: number;
-  fetchTimeout?: number;
-}
-
 interface PowerusConfigSource {
   url: string;
 }
 
-export type PowerusConfig = Vendor<
-  'powerUs',
-  PowerusConfigDefaults,
-  PowerusConfigSource
->;
+export type PowerusConfig = Vendor<'powerUs', PowerusConfigSource>;

@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
-import { Flight } from '../flight.type';
+import { Flight } from '../flight/flight.type';
 import { toMonetary } from '../lib/toMonetary';
-import { PowerusRespSlice } from './powerus.types';
+import { PowerusResp, PowerusRespSlice } from './powerus.types';
 
 export const normaliseFlight = (
   data: PowerusRespSlice,
@@ -23,7 +23,7 @@ export const normaliseFlight = (
 
   return {
     id,
-    source: 'powerUs',
+    vendorId: 'powerUs',
     price: toMonetary(price, 'EUR'),
     arrivalTime: new Date(data.arrival_date_time_utc),
     departureTime: new Date(data.departure_date_time_utc),
@@ -35,3 +35,11 @@ export const normaliseFlight = (
     cacheTTL,
   };
 };
+
+export const normaliseFlightResponse = (
+  data: PowerusResp,
+  cacheTTL: number,
+): Flight[] =>
+  data.flights.flatMap(item =>
+    item.slices.map(slc => normaliseFlight(slc, item.price, cacheTTL)),
+  );

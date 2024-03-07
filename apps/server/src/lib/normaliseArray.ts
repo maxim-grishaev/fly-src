@@ -1,14 +1,14 @@
-export interface NolmalArray<T, ID extends keyof any> {
+export interface NormalArray<T, ID extends keyof any> {
   byId: Record<ID, T>;
   ids: ID[];
 }
 
-export const getId = <T extends { id: string | number }>(item: T) => item.id;
+export const getId = <ID extends string | number>(item: { id: ID }) => item.id;
 
 export const normaliseArray = <T, ID extends keyof any>(
   arr: T[],
   getId: (item: T) => ID,
-): NolmalArray<T, ID> => {
+): NormalArray<T, ID> => {
   const ids = new Array<ID>(arr.length);
   const byId = arr.reduce(
     (acc, item, idx) => {

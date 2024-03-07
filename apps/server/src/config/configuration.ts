@@ -1,22 +1,37 @@
 import { PowerusConfig } from '../powerus/powerus.types';
-import { Vendor, VendorsConfig } from './config.types';
+import { Vendor, VendorMergedMap, VendorsConfig } from './config.types';
 
-// export const getAppConfig = (): { port: number } => ({
-//   port: parseInt(process.env.PORT ?? '', 10) ?? 3000,
-// });
+// TODO: remove this
+type TestConfig = Vendor<'testVnd', { testPropItem: 'b' }, { testPropDflt: 1 }>;
 
-export const getVendorConfig = (): VendorsConfig<
-  PowerusConfig | Vendor<'foo', { a: 1 }, { b: 'b' }>
-> => ({
+// type CfgOrig = ReturnType<typeof getVendorConfig>;
+// export type ConcreteVensdorsSrc = CfgOrig extends VendorsConfig<infer U> ? U : never;
+
+export type ConcreteVensdorsCfgSrc = PowerusConfig | TestConfig;
+export type ConcreteVensdorId = ConcreteVensdorsCfgSrc['vendorId'];
+export type ConcreteVensdorConfig = {
+  [K in ConcreteVensdorId]: VendorMergedMap<ConcreteVensdorsCfgSrc>[K];
+}[ConcreteVensdorId];
+
+const SEC = 1000;
+const MIN = 60 * SEC;
+const HOUR = 60 * MIN;
+
+export const getVendorConfig = (): VendorsConfig<ConcreteVensdorsCfgSrc> => ({
   vendors: {
-    foo: {
-      a: 1,
+    testVnd: {
+      testPropDflt: 1,
+      cacheTTL: HOUR,
+      retryAttempts: 0,
+      refteshOverlapMs: 5 * MIN,
+      timeout: SEC,
     },
     powerUs: {
-      cacheTTL: 60 * 60 * 1000, // 1h
-      fetchAttempts: 3,
-      fetchBackoff: 2000,
-      fetchTimeout: 1000,
+      cacheTTL: HOUR,
+      refteshOverlapMs: 5 * MIN,
+      retryAttempts: 2,
+      retryBackoff: SEC / 2,
+      timeout: 5 * SEC,
     },
   },
   sources: [

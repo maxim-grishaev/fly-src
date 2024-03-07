@@ -1,10 +1,9 @@
-import { Monetary } from './lib/toMonetary';
-import { PowerusConfig } from './powerus/powerus.types';
+import { WithVendorID } from '../config/config.types';
+import { Monetary } from '../lib/toMonetary';
 
-export interface Flight {
+export interface Flight<V extends string = string> extends WithVendorID<V> {
   id: string;
-  source: PowerusConfig['vendorId'];
-  //
+
   price: Monetary;
   fromPlace: string;
   toPlace: string;
@@ -12,7 +11,7 @@ export interface Flight {
   arrivalTime: Date;
   flightDuration: number;
   flightNumber: string;
-  //
+
   cacheTTL: number;
   validUntil: Date;
 }

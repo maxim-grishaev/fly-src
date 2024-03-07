@@ -8,9 +8,10 @@ async function main() {
     chalk.dim(`Creating server http://localhost:${chalk.green(String(PORT))}`),
   );
   const app = await NestFactory.create(AppModule, {
-    logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    // logger: ['log', 'error', 'warn', 'debug', 'verbose'],
     snapshot: true,
   });
+  // app.setGlobalPrefix('api/v0');
   await app.listen(PORT);
 }
 

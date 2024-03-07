@@ -1,4 +1,4 @@
-import { GenericVendor, VendorsConfig } from '../config/config.types';
+import { GenericVendor, VendorsConfig } from './config.types';
 
 /**
  * Merges config into plain array if items. Handles TS magic

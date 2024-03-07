@@ -1,24 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { RootController } from './app.controller';
-import { PowerusService } from './powerus/powerus.service';
-import { HelloService } from './hello/hello.service';
-import { VendorsService } from './vendors/vendors.service';
+import { DatabaseService } from './database/database.service';
+import { MOCK_FLIGHT_1, MOCK_FLIGHT_2 } from './flight/flight.mock';
+import { getId, normaliseArray } from './lib/normaliseArray';
 
+const DEFAULT_RESPONSE = [MOCK_FLIGHT_2, MOCK_FLIGHT_1];
 describe('AppController', () => {
   let appController: RootController;
+  const getFlights = jest.fn().mockReturnValue(DEFAULT_RESPONSE);
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [RootController],
-      providers: [PowerusService, HelloService, VendorsService],
-    }).compile();
-
-    appController = app.get(RootController);
+    appController = new RootController({
+      readAllValidFlights: async () => getFlights(),
+    } as DatabaseService);
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.helloWorld()).toBe('Hello World!');
+    it('reads and normalises data', () => {
+      expect(appController.getFlights()).resolves.toEqual(
+        normaliseArray(DEFAULT_RESPONSE, getId),
+      );
+
+      getFlights.mockReturnValueOnce([MOCK_FLIGHT_2]);
+      expect(appController.getFlights()).resolves.toEqual(
+        normaliseArray([MOCK_FLIGHT_2], getId),
+      );
     });
   });
 });

@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { VendorsService } from '../vendors/vendors.service';
-import { selectFlights } from './selectFlights';
-import { fetchOneSource } from './fetchOneSource';
+import { fetchSource } from './fetchSource';
+import { normaliseFlightResponse } from './normaliseFlightResponse';
+import { PowerusResp } from './powerus.types';
 
 @Injectable()
 export class PowerusService {
-  constructor(private readonly vnd: VendorsService) {}
+  constructor() {}
 
-  async fetchAllFlights() {
-    return selectFlights(this.vnd.getByVendorId('powerUs'), fetchOneSource);
+  async fetchSource(url: string, cacheTTL: number) {
+    const resp: PowerusResp = await fetchSource(url);
+    return normaliseFlightResponse(resp, cacheTTL);
   }
 }
