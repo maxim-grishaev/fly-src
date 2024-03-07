@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PowerusService } from '../powerus/powerus.service';
+import { PowerusService } from '../vendorPowerUs/powerus.service';
 import { ConcreteVensdorConfig } from '../config/configuration';
-import { DatabaseService } from '../database/database.service';
+import { TicketStorageService } from '../ticketStorage/ticketStorage.service';
 import { assertUnreachable } from '../lib/assertUnreachable';
 
 export type AsyncTaskRun = () => Promise<void>;
@@ -19,7 +19,7 @@ export class TaskerService {
   private readonly logger: Logger;
 
   constructor(
-    private readonly dbSvc: DatabaseService,
+    private readonly dbSvc: TicketStorageService,
     private readonly vndPowerusSvc: PowerusService,
   ) {
     this.logger = new Logger(TaskerService.name);
@@ -50,6 +50,7 @@ export class TaskerService {
             cfg.url,
             cfg.cacheTTL,
           );
+
           await this.dbSvc.writeManyFlights(data);
         });
       // Only for illustration purposes

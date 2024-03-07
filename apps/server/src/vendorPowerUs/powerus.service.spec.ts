@@ -56,35 +56,33 @@ describe(PowerusService.name, () => {
       .toMatchInlineSnapshot(`
 [
   {
-    "arrivalTime": 2021-01-01T00:00:00.000Z,
     "cacheTTL": 333,
-    "departureTime": 2021-01-01T00:00:00.000Z,
-    "flightDuration": 123,
-    "flightNumber": "flight_number",
-    "fromPlace": "origin_name",
-    "id": "776302d17f",
+    "flights": [
+      {
+        "flightDuration": 123,
+        "flightNumber": "flight_number",
+        "fromPlace": "origin_name",
+        "fromTime": "2021-01-01T00:00:00Z",
+        "id": "776302d17f",
+        "toPlace": "destination_name",
+        "toTime": "2021-01-01T00:00:00Z",
+      },
+      {
+        "flightDuration": 123,
+        "flightNumber": "flight_number",
+        "fromPlace": "destination_name",
+        "fromTime": "2021-02-01T00:00:00Z",
+        "id": "a9fd2cb531",
+        "toPlace": "origin_name",
+        "toTime": "2021-02-01T00:00:00Z",
+      },
+    ],
+    "id": "cbc7dd2f0e",
     "price": {
       "currency": "EUR",
       "price": "123.00",
     },
-    "toPlace": "destination_name",
-    "validUntil": 1970-01-01T00:00:00.456Z,
-    "vendorId": "powerUs",
-  },
-  {
-    "arrivalTime": 2021-02-01T00:00:00.000Z,
-    "cacheTTL": 333,
-    "departureTime": 2021-02-01T00:00:00.000Z,
-    "flightDuration": 123,
-    "flightNumber": "flight_number",
-    "fromPlace": "destination_name",
-    "id": "a9fd2cb531",
-    "price": {
-      "currency": "EUR",
-      "price": "123.00",
-    },
-    "toPlace": "origin_name",
-    "validUntil": 1970-01-01T00:00:00.456Z,
+    "validUntil": "1970-01-01T00:00:00.456Z",
     "vendorId": "powerUs",
   },
 ]

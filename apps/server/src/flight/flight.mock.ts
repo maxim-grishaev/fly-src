@@ -3,7 +3,7 @@ import { Ticket } from './flight.type';
 export const MOCK_FLIGHT_1: Ticket = {
   id: 't_1',
   vendorId: 'foo',
-  items: [
+  flights: [
     {
       id: 'f_1',
       fromPlace: 'A',
@@ -22,7 +22,7 @@ export const MOCK_FLIGHT_1: Ticket = {
 export const MOCK_FLIGHT_2: Ticket = {
   id: '2',
   vendorId: 'bar',
-  items: [
+  flights: [
     {
       id: 'f_2',
       fromPlace: 'B',

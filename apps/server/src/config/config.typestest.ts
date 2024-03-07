@@ -18,13 +18,13 @@ export const xxx: _Vens = {
       def1: 'v1 def 1',
       def2: 'v1 def 2',
       refteshAfterMs: 5000,
-      timeout: 1000,
+      timeoutMs: 1000,
     },
     'vend 2': {
       v2_def1: 'v2 def 1',
       v2_def2: 'v2 def 2',
       refteshAfterMs: 5000,
-      timeout: 1000,
+      timeoutMs: 1000,
     },
   },
   sources: [

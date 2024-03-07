@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`normaliseResponse should normalise response 1`] = `
+[
+  {
+    "cacheTTL": 3600000,
+    "flights": [
+      {
+        "flightDuration": 115,
+        "flightNumber": "144",
+        "fromPlace": "Schonefeld",
+        "fromTime": "2019-08-08T04:30:00.000Z",
+        "id": "9708aa1e09",
+        "toPlace": "Stansted",
+        "toTime": "2019-08-08T06:25:00.000Z",
+      },
+      {
+        "flightDuration": 120,
+        "flightNumber": "8542",
+        "fromPlace": "Stansted",
+        "fromTime": "2019-08-10T05:35:00.000Z",
+        "id": "18120bb1d2",
+        "toPlace": "Schonefeld",
+        "toTime": "2019-08-10T07:35:00.000Z",
+      },
+    ],
+    "id": "7bc756ad54",
+    "price": {
+      "currency": "EUR",
+      "price": "129.00",
+    },
+    "validUntil": "1970-01-01T01:00:00.123Z",
+    "vendorId": "powerUs",
+  },
+  {
+    "cacheTTL": 3600000,
+    "flights": [
+      {
+        "flightDuration": 120,
+        "flightNumber": "8545",
+        "fromPlace": "Schonefeld",
+        "fromTime": "2019-08-08T20:25:00.000Z",
+        "id": "8b6f9c5add",
+        "toPlace": "Stansted",
+        "toTime": "2019-08-08T22:25:00.000Z",
+      },
+      {
+        "flightDuration": 110,
+        "flightNumber": "145",
+        "fromPlace": "Stansted",
+        "fromTime": "2019-08-10T06:50:00.000Z",
+        "id": "aba024a07e",
+        "toPlace": "Schonefeld",
+        "toTime": "2019-08-10T08:40:00.000Z",
+      },
+    ],
+    "id": "e5d7896f5a",
+    "price": {
+      "currency": "EUR",
+      "price": "134.81",
+    },
+    "validUntil": "1970-01-01T01:00:00.123Z",
+    "vendorId": "powerUs",
+  },
+  {
+    "cacheTTL": 3600000,
+    "flights": [
+      {
+        "flightDuration": 120,
+        "flightNumber": "8545",
+        "fromPlace": "Schonefeld",
+        "fromTime": "2019-08-08T20:25:00.000Z",
+        "id": "8b6f9c5add",
+        "toPlace": "Stansted",
+        "toTime": "2019-08-08T22:25:00.000Z",
+      },
+      {
+        "flightDuration": 120,
+        "flightNumber": "8542",
+        "fromPlace": "Stansted",
+        "fromTime": "2019-08-10T05:35:00.000Z",
+        "id": "18120bb1d2",
+        "toPlace": "Schonefeld",
+        "toTime": "2019-08-10T07:35:00.000Z",
+      },
+    ],
+    "id": "d3250c730e",
+    "price": {
+      "currency": "EUR",
+      "price": "134.81",
+    },
+    "validUntil": "1970-01-01T01:00:00.123Z",
+    "vendorId": "powerUs",
+  },
+  {
+    "cacheTTL": 3600000,
+    "flights": [
+      {
+        "flightDuration": 115,
+        "flightNumber": "146",
+        "fromPlace": "Schonefeld",
+        "fromTime": "2019-08-08T16:00:00.000Z",
+        "id": "550a52736c",
+        "toPlace": "Stansted",
+        "toTime": "2019-08-08T17:55:00.000Z",
+      },
+      {
+        "flightDuration": 110,
+        "flightNumber": "145",
+        "fromPlace": "Stansted",
+        "fromTime": "2019-08-10T06:50:00.000Z",
+        "id": "aba024a07e",
+        "toPlace": "Schonefeld",
+        "toTime": "2019-08-10T08:40:00.000Z",
+      },
+    ],
+    "id": "56984df205",
+    "price": {
+      "currency": "EUR",
+      "price": "147.90",
+    },
+    "validUntil": "1970-01-01T01:00:00.123Z",
+    "vendorId": "powerUs",
+  },
+  {
+    "cacheTTL": 3600000,
+    "flights": [
+      {
+        "flightDuration": 120,
+        "flightNumber": "8543",
+        "fromPlace": "Schonefeld",
+        "fromTime": "2019-08-08T08:00:00.000Z",
+        "id": "04bb7ca48a",
+        "toPlace": "Stansted",
+        "toTime": "2019-08-08T10:00:00.000Z",
+      },
+      {
+        "flightDuration": 110,
+        "flightNumber": "145",
+        "fromPlace": "Stansted",
+        "fromTime": "2019-08-10T06:50:00.000Z",
+        "id": "aba024a07e",
+        "toPlace": "Schonefeld",
+        "toTime": "2019-08-10T08:40:00.000Z",
+      },
+    ],
+    "id": "8fa903ad50",
+    "price": {
+      "currency": "EUR",
+      "price": "147.90",
+    },
+    "validUntil": "1970-01-01T01:00:00.123Z",
+    "vendorId": "powerUs",
+  },
+]
+`;

@@ -4,9 +4,9 @@ export interface WithVendorID<T extends string> {
 
 export interface SchedulerConfig {
   refteshAfterMs: number;
-  timeout: number;
+  timeoutMs: number;
   retryAttempts?: number;
-  retryBackoff?: number;
+  backoffMs?: number;
 }
 
 export interface Vendor<

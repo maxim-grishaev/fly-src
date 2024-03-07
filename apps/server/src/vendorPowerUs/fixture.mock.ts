@@ -1,6 +1,6 @@
-import { PowerusResp, PowerusRespError } from './powerus.types';
+import { PowerUsResp, PowerUsRespError } from './powerus.types';
 
-export const S1: PowerusResp = {
+export const S1: PowerUsResp = {
   flights: [
     {
       slices: [
@@ -110,7 +110,7 @@ export const S1: PowerusResp = {
   ],
 };
 
-export const S2: PowerusResp = {
+export const S2: PowerUsResp = {
   flights: [
     {
       slices: [
@@ -220,7 +220,7 @@ export const S2: PowerusResp = {
   ],
 };
 
-export const ERROR_RESP: PowerusRespError = {
+export const ERROR_RESP: PowerUsRespError = {
   statusCode: 500,
   message: 'Internal server error',
 };

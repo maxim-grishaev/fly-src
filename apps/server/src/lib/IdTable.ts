@@ -1,4 +1,5 @@
 export interface IdTable<T, ID extends keyof any> {
+  getId: (item: T) => ID;
   byId: Record<ID, T>;
   ids: ID[];
 }
@@ -21,6 +22,7 @@ export const createIdTableByArray = <T, ID extends keyof any>(
   );
 
   return {
+    getId,
     byId,
     ids: arr.map(getId),
   };
@@ -28,13 +30,17 @@ export const createIdTableByArray = <T, ID extends keyof any>(
 
 export const writeToIdTable = <T, ID extends keyof any>(
   table: IdTable<T, ID>,
-  getId: (it: T) => ID,
   item: T,
 ) => {
-  const id = getId(item);
+  const id = table.getId(item);
   const hasItem = id in table.byId;
   if (!hasItem) {
     table.ids.push(id);
   }
   table.byId[id] = item;
 };
+
+export const selectFromIdTable = <T, ID extends keyof any>(
+  table: IdTable<T, ID>,
+  filter: (it: T) => boolean,
+) => table.ids.map(id => table.byId[id]).filter(filter);

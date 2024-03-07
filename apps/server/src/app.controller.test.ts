@@ -1,5 +1,5 @@
 import { RootController } from './app.controller';
-import { DatabaseService } from './database/database.service';
+import { TicketStorageService } from './ticketStorage/ticketStorage.service';
 import { MOCK_FLIGHT_1, MOCK_FLIGHT_2 } from './flight/flight.mock';
 import { getId, createIdTableByArray } from './lib/IdTable';
 
@@ -11,7 +11,7 @@ describe('AppController', () => {
   beforeEach(async () => {
     appController = new RootController({
       readAllValidFlights: async () => getFlights(),
-    } as DatabaseService);
+    } as TicketStorageService);
   });
 
   describe('root', () => {

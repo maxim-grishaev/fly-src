@@ -14,7 +14,7 @@ export interface TicketFlight {
 export interface Ticket<V extends string = string> extends WithVendorID<V> {
   id: string;
   price: Monetary;
-  items: TicketFlight[];
+  flights: TicketFlight[];
   cacheTTL: number;
   validUntil: string;
 }

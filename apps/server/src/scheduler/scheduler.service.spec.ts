@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SchedulerService } from './scheduler.service';
-import { DatabaseModule } from '../database/database.module';
+import { TicketStorageModule } from '../ticketStorage/ticketStorage.module';
 import { SchedulerModule } from './scheduler.module';
 
 describe('SchedulerService', () => {
@@ -8,7 +8,7 @@ describe('SchedulerService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, SchedulerModule],
+      imports: [TicketStorageModule, SchedulerModule],
       providers: [],
     }).compile();
 

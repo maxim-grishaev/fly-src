@@ -1,11 +1,11 @@
 import { Vendor } from '../config/config.types';
 
-export interface PowerusRespError {
+export interface PowerUsRespError {
   statusCode: number;
   message: string;
 }
 
-export interface PowerusRespSlice {
+export interface PowerUsRespSlice {
   origin_name: string;
   destination_name: string;
   departure_date_time_utc: string;
@@ -14,21 +14,17 @@ export interface PowerusRespSlice {
   duration: number;
 }
 
-export interface PowerusRespFlight {
-  slices: PowerusRespSlice[];
+export interface PowerUsRespFlight {
+  slices: PowerUsRespSlice[];
   price: number;
 }
 
-export interface PowerusResp {
-  flights: PowerusRespFlight[];
+export interface PowerUsResp {
+  flights: PowerUsRespFlight[];
 }
 
-interface PowerusConfigSource {
-  url: string;
-}
-
-export type PowerusConfig = Vendor<
+export type PowerUsConfig = Vendor<
   'powerUs',
-  PowerusConfigSource,
+  { url: string },
   { cacheTTL: number }
 >;

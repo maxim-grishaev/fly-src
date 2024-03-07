@@ -39,8 +39,8 @@ export class SchedulerService implements OnModuleInit {
   private async runTask(task: AsyncTask) {
     return await again(task.run, {
       retries: task.cfg.retryAttempts,
-      backoff: task.cfg.retryBackoff,
-      timeout: task.cfg.timeout,
+      backoff: task.cfg.backoffMs,
+      timeout: task.cfg.timeoutMs,
     });
   }
 

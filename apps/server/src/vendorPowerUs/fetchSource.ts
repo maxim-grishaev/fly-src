@@ -1,6 +1,6 @@
-import { PowerusResp } from './powerus.types';
+import { PowerUsResp } from './powerus.types';
 
-export const isPowerusResp = (data: unknown): data is PowerusResp =>
+export const isPowerusResp = (data: unknown): data is PowerUsResp =>
   data !== null &&
   typeof data === 'object' &&
   'flights' in data &&
