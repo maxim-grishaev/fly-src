@@ -1,28 +1,28 @@
 import { RootController } from './app.controller';
 import { TicketStorageService } from './ticketStorage/ticketStorage.service';
-import { MOCK_FLIGHT_1, MOCK_FLIGHT_2 } from './flight/flight.mock';
-import { getId, createIdTableByArray } from './lib/IdTable';
+import { MOCK_TICKET_1, MOCK_TICKET_2 } from './model/ticket.mock';
+import { getId, createIdTableByArray } from './lib/createIdTableByArray';
 
-const DEFAULT_RESPONSE = [MOCK_FLIGHT_2, MOCK_FLIGHT_1];
+const DEFAULT_RESPONSE = [MOCK_TICKET_2, MOCK_TICKET_1];
 describe('AppController', () => {
   let appController: RootController;
   const getFlights = jest.fn().mockReturnValue(DEFAULT_RESPONSE);
 
   beforeEach(async () => {
     appController = new RootController({
-      readAllValidFlights: async () => getFlights(),
+      readAllValid: async () => getFlights(),
     } as TicketStorageService);
   });
 
   describe('root', () => {
     it('reads and normalises data', () => {
-      expect(appController.getFlights()).resolves.toEqual(
+      expect(appController.getAllTickets()).resolves.toEqual(
         createIdTableByArray(DEFAULT_RESPONSE, getId),
       );
 
-      getFlights.mockReturnValueOnce([MOCK_FLIGHT_2]);
-      expect(appController.getFlights()).resolves.toEqual(
-        createIdTableByArray([MOCK_FLIGHT_2], getId),
+      getFlights.mockReturnValueOnce([MOCK_TICKET_2]);
+      expect(appController.getAllTickets()).resolves.toEqual(
+        createIdTableByArray([MOCK_TICKET_2], getId),
       );
     });
   });

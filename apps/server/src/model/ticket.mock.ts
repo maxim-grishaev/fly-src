@@ -1,6 +1,6 @@
-import { Ticket } from './flight.type';
+import { Ticket } from './ticket.type';
 
-export const MOCK_FLIGHT_1: Ticket = {
+export const MOCK_TICKET_1: Ticket = {
   id: 't_1',
   vendorId: 'foo',
   flights: [
@@ -14,12 +14,12 @@ export const MOCK_FLIGHT_1: Ticket = {
       flightNumber: 'X1',
     },
   ],
-  cacheTTL: 1000,
-  validUntil: new Date(500).toISOString(),
+  cacheTTLMs: 200,
+  staleAfter: new Date(500).toISOString(),
   price: { currency: 'EUR', amount: '10.00' },
 };
 
-export const MOCK_FLIGHT_2: Ticket = {
+export const MOCK_TICKET_2: Ticket = {
   id: '2',
   vendorId: 'bar',
   flights: [
@@ -33,7 +33,7 @@ export const MOCK_FLIGHT_2: Ticket = {
       flightNumber: 'X2',
     },
   ],
-  cacheTTL: 1000,
-  validUntil: new Date(500).toISOString(),
+  cacheTTLMs: 200,
+  staleAfter: new Date(500).toISOString(),
   price: { currency: 'EUR', amount: '10.00' },
 };

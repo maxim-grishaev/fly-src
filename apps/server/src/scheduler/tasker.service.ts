@@ -51,7 +51,7 @@ export class TaskerService {
             cfg.cacheTTL,
           );
 
-          await this.dbSvc.writeManyFlights(data);
+          await this.dbSvc.writeMany(data);
         });
       // Only for illustration purposes
       case 'testVnd':

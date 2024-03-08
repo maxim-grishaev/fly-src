@@ -53,8 +53,8 @@ describe(PowerusService.name, () => {
         },
       ],
     });
-    await expect(service.fetchSource('abc', 333)).resolves.
-toMatchInlineSnapshot(`
+    await expect(service.fetchSource('abc', 333)).resolves
+      .toMatchInlineSnapshot(`
 [
   {
     "cacheTTL": 333,

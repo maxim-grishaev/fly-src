@@ -1,4 +1,4 @@
-import { Ticket, TicketFlight } from '../flight/flight.type';
+import { Ticket, TicketFlight } from '../model/ticket.type';
 import { createId } from '../lib/createId';
 import { toMonetary } from '../lib/toMonetary';
 import {
@@ -42,8 +42,8 @@ export const normaliseTicket = (
   id: createTicketId(ticket),
   price: toMonetary(ticket.price, 'EUR'),
   flights: ticket.slices.map(normaliseTicketFlight),
-  validUntil: new Date(Date.now() + cacheTTL).toISOString(),
-  cacheTTL,
+  staleAfter: new Date(Date.now() + cacheTTL).toISOString(),
+  cacheTTLMs: cacheTTL,
 });
 
 export const normaliseFlightResponse = (

@@ -21,6 +21,9 @@
     "start": {
       "dependsOn": ["build"]
     },
+    "start:prod": {
+      "dependsOn": ["build"]
+    },
     "lint": {
       "dependsOn": ["build", "lint-config"],
       "outputs": []
