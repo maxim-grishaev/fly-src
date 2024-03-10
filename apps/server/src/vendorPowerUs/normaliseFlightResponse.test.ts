@@ -22,6 +22,7 @@ describe('normaliseFlight', () => {
     const result = normaliseTicket(S1.flights[0], 60 * 60 * 1000);
     expect(result).toMatchInlineSnapshot(`
 APITicket {
+  "bestBefore": 1970-01-01T01:00:00.123Z,
   "cacheTTLMs": 3600000,
   "flights": [
     APITicketFlight {
@@ -48,7 +49,6 @@ APITicket {
     "amount": "129.00",
     "currency": "EUR",
   },
-  "staleAfter": 1970-01-01T01:00:00.123Z,
   "vendorId": "powerUs",
 }
 `);

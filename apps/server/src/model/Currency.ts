@@ -1,16 +1,19 @@
-export type Currency = 'XXX' | 'EUR' | 'USD' | 'GBP';
+export enum Currency {
+  Eur = 'EUR',
+  Gbp = 'GBP',
+  Usd = 'USD',
+}
+export const MAIN_CURRENCY = Currency.Eur;
 
-export const CurrencyPrescMap: Record<Currency, number> = {
-  XXX: 2,
+export const CurrencyPrescisionMap: Record<Currency, number> = {
   EUR: 2,
   USD: 2,
   GBP: 2,
 };
 
 export const toCurrency = (str: string): Currency => {
-  if (str in CurrencyPrescMap) {
+  if (str in CurrencyPrescisionMap) {
     return str as Currency;
   }
-  // throw new Error(`Invalid currency: ${str}`);
-  return 'XXX';
+  throw new Error(`Invalid currency: ${str}`);
 };

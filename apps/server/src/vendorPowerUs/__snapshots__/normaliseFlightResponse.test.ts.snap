@@ -3,6 +3,7 @@
 exports[`normaliseResponse should normalise response 1`] = `
 [
   APITicket {
+    "bestBefore": 1970-01-01T01:00:00.123Z,
     "cacheTTLMs": 3600000,
     "flights": [
       APITicketFlight {
@@ -29,10 +30,10 @@ exports[`normaliseResponse should normalise response 1`] = `
       "amount": "129.00",
       "currency": "EUR",
     },
-    "staleAfter": 1970-01-01T01:00:00.123Z,
     "vendorId": "powerUs",
   },
   APITicket {
+    "bestBefore": 1970-01-01T01:00:00.123Z,
     "cacheTTLMs": 3600000,
     "flights": [
       APITicketFlight {
@@ -59,10 +60,10 @@ exports[`normaliseResponse should normalise response 1`] = `
       "amount": "134.81",
       "currency": "EUR",
     },
-    "staleAfter": 1970-01-01T01:00:00.123Z,
     "vendorId": "powerUs",
   },
   APITicket {
+    "bestBefore": 1970-01-01T01:00:00.123Z,
     "cacheTTLMs": 3600000,
     "flights": [
       APITicketFlight {
@@ -89,10 +90,10 @@ exports[`normaliseResponse should normalise response 1`] = `
       "amount": "134.81",
       "currency": "EUR",
     },
-    "staleAfter": 1970-01-01T01:00:00.123Z,
     "vendorId": "powerUs",
   },
   APITicket {
+    "bestBefore": 1970-01-01T01:00:00.123Z,
     "cacheTTLMs": 3600000,
     "flights": [
       APITicketFlight {
@@ -119,10 +120,10 @@ exports[`normaliseResponse should normalise response 1`] = `
       "amount": "147.90",
       "currency": "EUR",
     },
-    "staleAfter": 1970-01-01T01:00:00.123Z,
     "vendorId": "powerUs",
   },
   APITicket {
+    "bestBefore": 1970-01-01T01:00:00.123Z,
     "cacheTTLMs": 3600000,
     "flights": [
       APITicketFlight {
@@ -149,7 +150,6 @@ exports[`normaliseResponse should normalise response 1`] = `
       "amount": "147.90",
       "currency": "EUR",
     },
-    "staleAfter": 1970-01-01T01:00:00.123Z,
     "vendorId": "powerUs",
   },
 ]

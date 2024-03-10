@@ -1,6 +1,7 @@
 import { APIMonetary } from './APIMonetary';
 import { APITicket } from './APITicket';
 import { APITicketFlight } from './APITicketFlight';
+import { Currency } from './Currency';
 
 export const MOCK_TICKET_1 = APITicket.create({
   id: 't_1',
@@ -17,8 +18,8 @@ export const MOCK_TICKET_1 = APITicket.create({
     }),
   ],
   cacheTTLMs: 200,
-  staleAfter: new Date(500),
-  price: APIMonetary.create(10, 'EUR'),
+  bestBefore: new Date(500),
+  price: APIMonetary.create(10, Currency.Eur),
 });
 
 export const MOCK_TICKET_2 = APITicket.create({
@@ -36,6 +37,6 @@ export const MOCK_TICKET_2 = APITicket.create({
     }),
   ],
   cacheTTLMs: 200,
-  staleAfter: new Date(500),
-  price: APIMonetary.create(20, 'EUR'),
+  bestBefore: new Date(500),
+  price: APIMonetary.create(20, Currency.Eur),
 });

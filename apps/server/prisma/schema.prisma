@@ -34,7 +34,7 @@ model Ticket {
   // priceCurrencyId String
   flights         TicketFlight[]
   cacheTTLMs      Int
-  staleAfter      DateTime
+  bestBefore      DateTime
   fetchedAt       DateTime       @default(now())
 }
 

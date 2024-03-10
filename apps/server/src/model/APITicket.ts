@@ -16,7 +16,7 @@ interface Ticket<V extends string = string> extends WithVendorID<V> {
   // depending on the source + easier to investigate
   cacheTTLMs: number;
   // Used to filter out stale data
-  staleAfter: Date;
+  bestBefore: Date;
 }
 
 export class APITicket<V extends string = string>
@@ -32,7 +32,7 @@ export class APITicket<V extends string = string>
       vendorId: tp.vendorId,
       price: APIMonetary.create(tp.priceAmout, toCurrency(tp.priceCurrency)),
       cacheTTLMs: tp.cacheTTLMs,
-      staleAfter: tp.staleAfter,
+      bestBefore: tp.bestBefore,
       flights: tfps.map(APITicketFlight.fromPrisma),
     });
 
@@ -43,7 +43,7 @@ export class APITicket<V extends string = string>
       id: this.id,
       priceAmout: this.price.amount,
       priceCurrency: this.price.currency,
-      staleAfter: this.staleAfter,
+      bestBefore: this.bestBefore,
       cacheTTLMs: this.cacheTTLMs,
       vendor: { connect: { id: this.vendorId } },
       flights: { connect: this.flights.map(f => ({ id: f.id })) },
@@ -60,7 +60,7 @@ export class APITicket<V extends string = string>
   price = new APIMonetary(this._d.price);
 
   @ApiDateProp('The date until the ticket data is still valid')
-  staleAfter = this._d.staleAfter;
+  bestBefore = this._d.bestBefore;
 
   @ApiProperty({
     description: 'A list of flights in the ticket',

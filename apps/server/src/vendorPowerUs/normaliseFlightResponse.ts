@@ -7,6 +7,7 @@ import {
 import { APITicket } from '../model/APITicket';
 import { APIMonetary } from '../model/APIMonetary';
 import { APITicketFlight } from '../model/APITicketFlight';
+import { MAIN_CURRENCY } from '../model/Currency';
 
 const getSliceIdData = (s: PowerUsRespSlice) => [
   s.flight_number,
@@ -38,9 +39,9 @@ export const normaliseTicket = (ticket: PowerUsRespFlight, cacheTTL: number) =>
   APITicket.create({
     vendorId: 'powerUs',
     id: createTicketId(ticket),
-    price: APIMonetary.create(ticket.price, 'EUR'),
+    price: APIMonetary.create(ticket.price, MAIN_CURRENCY),
     flights: ticket.slices.map(normaliseTicketFlight),
-    staleAfter: new Date(Date.now() + cacheTTL),
+    bestBefore: new Date(Date.now() + cacheTTL),
     cacheTTLMs: cacheTTL,
   });
 

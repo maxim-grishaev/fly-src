@@ -1,17 +1,12 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Injectable, Logger } from '@nestjs/common';
 import { APITicket } from '../model/APITicket';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
-export class TicketStorageService extends PrismaClient implements OnModuleInit {
+export class TicketStorageService {
   private readonly logger: Logger;
 
-  onModuleInit() {
-    return this.$connect();
-  }
-
-  constructor() {
-    super();
+  constructor(private readonly db: PrismaService) {
     const id = (Date.now() + Math.random()).toString(36);
     this.logger = new Logger([TicketStorageService.name, id].join(': '));
   }
@@ -19,46 +14,50 @@ export class TicketStorageService extends PrismaClient implements OnModuleInit {
   async writeMany(tickets: APITicket[]) {
     this.logger.debug(`Saving ${tickets.length} flights...`);
 
-    await this.$transaction(
-      tickets.flatMap(t => {
-        const tcri = t.toCreateInput();
-        return [
-          ...t.flights.map(f => {
-            const fcri = f.toCreateInput();
-            return this.ticketFlight.upsert({
-              where: { id: f.id },
-              update: fcri,
-              create: fcri,
-            });
-          }),
-          this.ticket.upsert({
-            where: { id: t.id },
-            update: tcri,
-            create: tcri,
-          }),
-        ];
-      }),
-    ).catch(e => {
-      this.logger.error('Error saving flights', e);
-    });
+    await this.db
+      .$transaction(
+        tickets.flatMap(t => {
+          const ticket4db = t.toCreateInput();
+          return [
+            ...t.flights
+              .map(f => f.toCreateInput())
+              .map(flight4db =>
+                this.db.ticketFlight.upsert({
+                  where: { id: flight4db.id },
+                  update: flight4db,
+                  create: flight4db,
+                }),
+              ),
+            this.db.ticket.upsert({
+              where: { id: t.id },
+              update: ticket4db,
+              create: ticket4db,
+            }),
+          ];
+        }),
+      )
+      .catch(e => {
+        this.logger.error('Error saving flights', e);
+      });
 
     this.logger.log(`Saved! ${tickets.length} items`);
   }
 
   async readAllValid() {
     const now = Date.now();
-    const dbTickets = await this.ticket.findMany({
-      where: { staleAfter: { gt: new Date(now) } },
+    const dbTickets = await this.db.ticket.findMany({
+      where: { bestBefore: { gt: new Date(now) } },
       include: { flights: true },
     });
     const valid = dbTickets.map(t => APITicket.fromPrisma(t, t.flights));
+    // .filter(t => t.bestBefore.getTime() > now); // handled by the db query
 
     this.logger.verbose(`Read ${valid.length} flights`);
     return valid;
   }
 
   async readOne(id: string) {
-    const dbTicket = await this.ticket.findUnique({
+    const dbTicket = await this.db.ticket.findUnique({
       where: { id },
       include: { flights: true },
     });

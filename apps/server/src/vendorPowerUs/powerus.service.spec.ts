@@ -57,6 +57,7 @@ describe(PowerusService.name, () => {
       .toMatchInlineSnapshot(`
 [
   APITicket {
+    "bestBefore": 1970-01-01T00:00:00.456Z,
     "cacheTTLMs": 333,
     "flights": [
       APITicketFlight {
@@ -83,7 +84,6 @@ describe(PowerusService.name, () => {
       "amount": "123.00",
       "currency": "EUR",
     },
-    "staleAfter": 1970-01-01T00:00:00.456Z,
     "vendorId": "powerUs",
   },
 ]

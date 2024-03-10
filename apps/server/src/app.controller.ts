@@ -6,7 +6,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { TicketStorageService } from './ticketStorage/ticketStorage.service';
-import { APIIdTable } from './lib/APIIdTable';
+import { APIIdTable } from './model/APIIdTable';
 import { APITicket } from './model/APITicket';
 import { APIOkWithMeta } from './model/api.lib';
 import { ApiExtraModels, ApiOkResponse } from '@nestjs/swagger';
