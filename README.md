@@ -58,14 +58,28 @@ No more complex logic => the response time is very low.
 
 # Response time
 
-**No caching:**
+An excerpt from logs:
 
-Typically on a local machine it takes 12ms, where the select is only 5msm meaning 7ms is a time for network + serialization.
-Which is way below 1 min.
+```
+[Nest] 23514  - 03/10/2024, 11:27:33 PM     LOG [NestApplication] Nest application successfully started +2ms
+[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [TicketStorageService: ltm34t1d.7p] Read 8 flights
+[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [RootController] Read all 8 tickets. Min bestBefore: 2024-03-10T23:27:33.003Z
+[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [RootController] [all-tickets] Setting cache for 3578861 ms, until: 2024-03-10T23:27:33.003Z. Response time: 10.111 ms.
+[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [RootController] [all-tickets] Read from cache. Response time: 0.313 ms.
+[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [RootController] [all-tickets] Read from cache. Response time: 0.164 ms.
+[Nest] 23514  - 03/10/2024, 11:27:57 PM VERBOSE [RootController] Read ticket 456d42825f.
+[Nest] 23514  - 03/10/2024, 11:27:57 PM VERBOSE [RootController] [ticket/456d42825f] Setting cache for 3575026 ms, until: 2024-03-10T23:27:33.013Z. Response time: 2.654 ms.
+[Nest] 23514  - 03/10/2024, 11:27:58 PM VERBOSE [RootController] [ticket/456d42825f] Read from cache. Response time: 0.060 ms.
+[Nest] 23514  - 03/10/2024, 11:27:58 PM VERBOSE [RootController] [ticket/456d42825f] Read from cache. Response time: 0.038 ms.
+[Nest] 23514  - 03/10/2024, 11:27:58 PM VERBOSE [RootController] [ticket/456d42825f] Read from cache. Response time: 0.055 ms.
+```
+
+These are "internal" times. For the end-user it adds 5 to 15 ms. With "cold" cache, it's around 30 ms on my laptop.
 
 ## Implementation details
 
-It's my first time using NestJS, so some implementation details might be not quite idiomatic.
+> [!NOTE]
+> It's my first time using NestJS, so some implementation details may be not quite idiomatic or implemented easier.
 
 - SQLite + Prisma => easy to switch to a "real" DB
 
@@ -127,13 +141,19 @@ It's a matter of taste, but to me this sounds a bit more clear.
 
 **TODO Improvements**
 
+- More tests
 - Publish
 - CI/CD
-- Redis for "proper" caching.
 - Data cleanup
-- More tests
-- Easier DB switching: `sqlite` for local testing, `postgres` for prod.
 - Logger logic / management
+- Cache:
+  - fine-tuned caching (e.g. Redis)
+  - change strategy: cache keys, different cachr service instances, etc.
+- Easier DB switching: `sqlite` for local testing, `postgres` for prod.
+- Infra management (e.g. Terraform or Pulumi)
+- pre-commit hooks
+- linting
+- Add / remove vendor items dynamically (e.g. via API)
 
 ## Alternative implementation
 

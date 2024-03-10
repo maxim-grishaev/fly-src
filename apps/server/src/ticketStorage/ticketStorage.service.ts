@@ -4,12 +4,15 @@ import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class TicketStorageService {
-  private readonly logger: Logger;
+  private readonly logger = new Logger(
+    [
+      TicketStorageService.name,
+      // Just to make sure there is the same instance of storage service for all the services
+      (Date.now() + Math.random()).toString(36),
+    ].join(': '),
+  );
 
-  constructor(private readonly db: PrismaService) {
-    const id = (Date.now() + Math.random()).toString(36);
-    this.logger = new Logger([TicketStorageService.name, id].join(': '));
-  }
+  constructor(private readonly db: PrismaService) {}
 
   async writeMany(tickets: APITicket[]) {
     this.logger.debug(`Saving ${tickets.length} flights...`);

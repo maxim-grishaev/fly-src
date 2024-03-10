@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import {
   ConcreteVensdorConfig,
   getVendorConfig,
@@ -6,13 +6,18 @@ import {
 import { mergeConfig } from '../config/mergeConfig';
 import { again } from '../lib/again';
 import { AsyncTask, TaskerService } from './tasker.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class SchedulerService implements OnModuleInit {
   private cfg = mergeConfig(getVendorConfig());
   private readonly logger: Logger;
 
-  constructor(private readonly taskSvc: TaskerService) {
+  constructor(
+    private readonly taskSvc: TaskerService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {
     this.logger = new Logger(SchedulerService.name);
   }
 
@@ -51,14 +56,16 @@ export class SchedulerService implements OnModuleInit {
       .catch(err => this.logger.warn(task.msg('Prefetch failed', err)));
   }
 
-  // TODO: cancellation
   private schedule(task: AsyncTask) {
     const update = async () => {
       this.logger.debug(task.msg('Run scheduled task...'));
       await this.runTask(task)
         .then(() => this.logger.log(task.msg('Scheduled task OK!')))
         .catch(err => this.logger.warn(task.msg('Scheduled task failed', err)))
-        .finally(() => this.schedule(task));
+        // Here we reset the entire cache
+        // but better strategy may be implemented, e.g. add cache keys to the task
+        .then(() => this.cacheManager.reset())
+        .then(() => this.schedule(task));
     };
 
     this.logger.verbose(task.msg('Schedule task', task.cfg.refteshAfterMs));

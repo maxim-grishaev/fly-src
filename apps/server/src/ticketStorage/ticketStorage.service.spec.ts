@@ -83,6 +83,9 @@ describe('TicketStorageService', () => {
 
     await service.readAllValid();
 
+    // Checking we're
+    // 1) filtering OUT the outdated tickets
+    // 2) including the flights, as by-default it converts to an empty array
     expect(MockTicketTable.findMany).toHaveBeenCalledWith({
       where: { bestBefore: { gt: new Date(Date.now()) } },
       include: { flights: true },
