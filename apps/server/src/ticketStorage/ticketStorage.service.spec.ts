@@ -1,20 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TicketStorageService } from './ticketStorage.service';
 import { mockDateNow } from '../lib/mockDateNow';
-import { Ticket } from '../model/ticket.type';
+import { APITicket } from '../model/APITicket';
+import { APIMonetary } from '../model/APIMonetary';
 
 const mockNow = mockDateNow(1);
-const createTicket = (id: string, validUntil: number): Ticket => ({
-  id,
-  price: {
-    amount: '100',
-    currency: 'EUR',
-  },
-  cacheTTLMs: 0,
-  staleAfter: new Date(validUntil).toISOString(),
-  flights: [],
-  vendorId: 'test',
-});
+const createTicket = (id: string, validUntil: number) =>
+  APITicket.create({
+    id,
+    price: APIMonetary.create(100, 'EUR'),
+    cacheTTLMs: 0,
+    staleAfter: new Date(validUntil),
+    flights: [],
+    vendorId: 'test',
+  });
 
 describe('TicketStorageService', () => {
   let service: TicketStorageService;

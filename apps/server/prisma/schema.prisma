@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TicketFlight {
+  id             String   @id
+  fromPlace      String
+  fromTime       DateTime
+  toPlace        String
+  toTime         DateTime
+  flightDuration Int
+  flightNumber   String
+  tickets        Ticket[]
+}
+
+model Ticket {
+  id              String         @id
+  priceAmout      Decimal
+  priceCurrency   String
+  vendorId        String
+  vendor          Vendor         @relation(fields: [vendorId], references: [id])
+  // priceCurrency   Currency       @relation(fields: [priceCurrencyId], references: [id])
+  // priceCurrencyId String
+  flights         TicketFlight[]
+  cacheTTLMs      Int
+  staleAfter      DateTime
+  fetchedAt       DateTime       @default(now())
+}
+
+// model Currency {
+//   id          String  @id
+//   prescision  Int     @default(2)
+//   Ticket     Ticket[]
+// }
+
+model Task {
+  id             Int          @id @default(autoincrement())
+  cacheTTL       Int
+  refteshAfterMs Int
+  retryAttempts  Int
+  backoffMs      Int?
+  timeoutMs      Int?
+  vendorId       String
+  vendor         Vendor       @relation(fields: [vendorId], references: [id])
+  PowerusTask    PowerusTask?
+}
+
+model Vendor {
+  id          String @id
+  description String
+  tasks       Task[]
+  tickets     Ticket[]
+}
+
+model PowerusTask {
+  id     Int    @id @default(autoincrement())
+  taskId Int    @unique
+  task   Task   @relation(fields: [taskId], references: [id])
+  url    String @unique
+}

@@ -21,34 +21,34 @@ describe('normaliseFlight', () => {
   it('should normalise the response', () => {
     const result = normaliseTicket(S1.flights[0], 60 * 60 * 1000);
     expect(result).toMatchInlineSnapshot(`
-{
-  "cacheTTL": 3600000,
+APITicket {
+  "cacheTTLMs": 3600000,
   "flights": [
-    {
+    APITicketFlight {
       "flightDuration": 115,
       "flightNumber": "144",
       "fromPlace": "Schonefeld",
-      "fromTime": "2019-08-08T04:30:00.000Z",
+      "fromTime": 2019-08-08T04:30:00.000Z,
       "id": "9708aa1e09",
       "toPlace": "Stansted",
-      "toTime": "2019-08-08T06:25:00.000Z",
+      "toTime": 2019-08-08T06:25:00.000Z,
     },
-    {
+    APITicketFlight {
       "flightDuration": 120,
       "flightNumber": "8542",
       "fromPlace": "Stansted",
-      "fromTime": "2019-08-10T05:35:00.000Z",
+      "fromTime": 2019-08-10T05:35:00.000Z,
       "id": "18120bb1d2",
       "toPlace": "Schonefeld",
-      "toTime": "2019-08-10T07:35:00.000Z",
+      "toTime": 2019-08-10T07:35:00.000Z,
     },
   ],
   "id": "7bc756ad54",
-  "price": {
+  "price": APIMonetary {
     "amount": "129.00",
     "currency": "EUR",
   },
-  "validUntil": "1970-01-01T01:00:00.123Z",
+  "staleAfter": 1970-01-01T01:00:00.123Z,
   "vendorId": "powerUs",
 }
 `);

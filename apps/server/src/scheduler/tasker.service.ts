@@ -25,11 +25,15 @@ export class TaskerService {
     this.logger = new Logger(TaskerService.name);
   }
 
-  createTask(cfg: ConcreteVensdorConfig, idx: number, run: RunTask): AsyncTask {
+  public createTask(
+    cfg: ConcreteVensdorConfig,
+    idx: number,
+    run: RunTask,
+  ): AsyncTask {
     const taskId = [cfg.vendorId, idx].join(': ');
     const msg: GetLogMessasge = (msg, data) =>
       `[${taskId}] ${msg} ${data ? JSON.stringify(data) : ''}`;
-    this.logger.debug(msg('Task created', cfg));
+    this.logger.verbose(msg('Task created', cfg));
     return {
       run: async () => {
         await run(msg);

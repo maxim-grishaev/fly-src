@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { TicketStorageService } from './ticketStorage/ticketStorage.service';
 import { APIIdTable } from './lib/APIIdTable';
-import { APITicket } from './model/api.types';
+import { APITicket } from './model/APITicket';
 import { APIOkWithMeta } from './model/api.lib';
 import { ApiExtraModels, ApiOkResponse } from '@nestjs/swagger';
 
@@ -23,12 +23,12 @@ export class RootController {
   })
   async getAllTickets() {
     const perfStart = performance.now();
-    const allFlights = await this.db.readAllValid();
+    const allTickets = await this.db.readAllValid();
 
     // Here we can hide / enrich some data for the clien
     return APIOkWithMeta.create({
       data: APIIdTable.createByArray(
-        allFlights.map(APITicket.create),
+        allTickets.map(APITicket.create),
         APIIdTable.getId,
       ),
       perfStart,
@@ -45,7 +45,7 @@ export class RootController {
     const flight = await this.db.readOne(id);
 
     return APIOkWithMeta.create({
-      data: APITicket.create(flight),
+      data: flight ? APITicket.create(flight) : null,
       perfStart,
     });
   }

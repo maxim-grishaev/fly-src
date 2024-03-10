@@ -56,34 +56,34 @@ describe(PowerusService.name, () => {
     await expect(service.fetchSource('abc', 333)).resolves
       .toMatchInlineSnapshot(`
 [
-  {
-    "cacheTTL": 333,
+  APITicket {
+    "cacheTTLMs": 333,
     "flights": [
-      {
+      APITicketFlight {
         "flightDuration": 123,
         "flightNumber": "flight_number",
         "fromPlace": "origin_name",
-        "fromTime": "2021-01-01T00:00:00Z",
+        "fromTime": 2021-01-01T00:00:00.000Z,
         "id": "776302d17f",
         "toPlace": "destination_name",
-        "toTime": "2021-01-01T00:00:00Z",
+        "toTime": 2021-01-01T00:00:00.000Z,
       },
-      {
+      APITicketFlight {
         "flightDuration": 123,
         "flightNumber": "flight_number",
         "fromPlace": "destination_name",
-        "fromTime": "2021-02-01T00:00:00Z",
+        "fromTime": 2021-02-01T00:00:00.000Z,
         "id": "a9fd2cb531",
         "toPlace": "origin_name",
-        "toTime": "2021-02-01T00:00:00Z",
+        "toTime": 2021-02-01T00:00:00.000Z,
       },
     ],
     "id": "cbc7dd2f0e",
-    "price": {
+    "price": APIMonetary {
       "amount": "123.00",
       "currency": "EUR",
     },
-    "validUntil": "1970-01-01T00:00:00.456Z",
+    "staleAfter": 1970-01-01T00:00:00.456Z,
     "vendorId": "powerUs",
   },
 ]
