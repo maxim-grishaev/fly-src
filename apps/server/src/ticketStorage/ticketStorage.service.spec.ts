@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TicketStorageService } from './ticketStorage.service';
 import { mockDateNow } from '../lib/mockDateNow';
 import { Currency } from '../model/Currency';
-import { PrismaService } from './prisma.service';
 import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 const MockTicketTable = {
   findMany: jest.fn(),
