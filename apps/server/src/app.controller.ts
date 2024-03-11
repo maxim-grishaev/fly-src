@@ -27,8 +27,8 @@ const CACHE = {
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
-export class RootController {
-  private readonly logger = new Logger(RootController.name);
+export class AppController {
+  private readonly logger = new Logger(AppController.name);
 
   constructor(
     private readonly db: TicketStorageService,

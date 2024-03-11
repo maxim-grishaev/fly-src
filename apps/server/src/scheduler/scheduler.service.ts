@@ -1,18 +1,13 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { again } from '../lib/again';
 import { AsyncTask, TaskerService } from './tasker.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 
 @Injectable()
 export class SchedulerService implements OnModuleInit {
   private tasks: AsyncTask[] = [];
   private readonly logger: Logger;
 
-  constructor(
-    private readonly taskSvc: TaskerService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {
+  constructor(private readonly taskSvc: TaskerService) {
     this.logger = new Logger(SchedulerService.name);
   }
 
@@ -52,9 +47,6 @@ export class SchedulerService implements OnModuleInit {
         .catch(err =>
           this.logger.warn(task.message('Scheduled task failed', err)),
         )
-        // Here we reset the entire cache
-        // but better strategy may be implemented, e.g. add cache keys to the task
-        .then(() => this.cacheManager.reset())
         .then(() => this.schedule(task));
     };
 

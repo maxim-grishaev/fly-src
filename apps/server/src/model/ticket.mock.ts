@@ -23,7 +23,7 @@ export const MOCK_TICKET_1 = APITicket.create({
 });
 
 export const MOCK_TICKET_2 = APITicket.create({
-  id: '2',
+  id: 't_2',
   vendorId: 'bar',
   flights: [
     APITicketFlight.create({

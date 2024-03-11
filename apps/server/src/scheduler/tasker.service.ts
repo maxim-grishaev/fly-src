@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PowerusService } from '../vendorPowerUs/powerus.service';
 import { TicketStorageService } from '../ticketStorage/ticketStorage.service';
 import { PrismaService } from '../ticketStorage/prisma.service';
 import { Prisma } from '@prisma/client';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 
 type GetLogMessasge = (msg: string, data?: unknown) => string;
 export type AsyncTask = {
@@ -17,6 +18,7 @@ export class TaskerService {
   private readonly logger = new Logger(TaskerService.name);
 
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly ticketSvc: TicketStorageService,
     private readonly db: PrismaService,
     private readonly vndPowerusSvc: PowerusService,
@@ -48,6 +50,9 @@ export class TaskerService {
         this.logger.verbose(
           message(`Fetched OK! ${data.length} items from ${pwr.url}`),
         );
+        // Here we reset the entire cache
+        // but better strategy may be implemented, e.g. add cache keys to the task
+        this.cacheManager.reset();
         await this.ticketSvc.writeMany(data);
       },
       message,
