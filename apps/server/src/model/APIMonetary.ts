@@ -9,7 +9,6 @@ type Monetary = {
   currency: Currency;
 };
 
-// TODO: Use int / monetary types like dinero.js
 const toMonetary = (
   price: number | Prisma.Decimal,
   currency: Currency,

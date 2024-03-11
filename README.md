@@ -6,108 +6,111 @@ A flight tickets service. [Original task](#original-task) definition.
 
 **Pre-requisites:**
 
-- Node.js `20.x`
-
-I think it should work with `18.x` too, just not tested.
+- Node.js `>=18.x`
 
 **Initialise**
 
-Install the dependencies and with "postinstall" task also does basic initialisation: create, seed DB and generate Prisma types.
+Install the dependencies.
 
 ```sh
-npm install
+$ npm install
 ```
+
+Postinstall script also does basic initialisation: create, seed DB and generate Prisma types.
 
 **Run the app**
 
-In dev mode (with wanch):
+In dev mode, with watch:
 
 ```sh
-npm run dev
+$ npm run dev
 ```
 
 In prod mode:
 
 ```sh
-npm run start:prod
+$ npm run start
 ```
 
 # Approach
 
-The whole app can be thought as 2 "main" parts:
+> [!NOTE]
+> The main idea: we are pre-fetching the tickets and then fetch it again asynchronously every a bit less than 1 hour, so the data keeps being fresh.
+> We also store the `bestBefore` DateTime column for every item, so we can easily check if the data is stale at the time of the request.
+> The web API is just a simple select from the DB, lazily cached.
 
-**1. Scheduler**
+**Detailed**
 
-First time fetching tickets during the app initialization, and then re-fetching tickets every 55 minutes: just a bit less than a TTL to be able to refresh.
-I've added a property for every item: `bestBefore` = `fetchedAt` time + `TTL` (1h, configurable).
+First time tickets are fetched during the app initialization (`onModuleInit`), and then schedule re-fetching every 55 minutes: just a bit less than a TTL to be able to refresh.
+The property TTL time is configurable in DB `PowerusTask` table.
 
-Consists of 2 services: `SchedulerService` and `TaskerService`.
-
-- `SchedulerService` is quite abstract, so it's only responsibility is to periodically call a "task": an async function with some congigured retry logic.
-- The `TaskerService` is a glue layer between `vendors` and `SchedulerService`. It's responsible for calling a vendor (fetching the data) and saving results to the DB. `TaskerService` can also be used to schedule cleanup stale data. Not implemented, though.
-
-**2. Selection API**
-
-A basic select from thwe DB, roughtly:
-
-- `SELECT * FROM tickets WHERE bestBefore > now()`
-
-This is how we make sure that no stale data is returned to the client. It's also returned in the response, so the client can decide whether it needs to refresh the data or not (if it becomes stale after the request is made).
-
-No more complex logic => the response time is very low.
+- There is a concept of **vendors**: a vendor is a service that fetches the data from a specific source. It's a simple async function that returns an array of `APITicket` items.
+- Currently there is only one vendor: `src/vendorPowerUs`. Vendor also contains all the normalisation logic. Where to keep id generation logic is debatable, but for now it's in the vendor.
+- `SchedulerService` is quite abstract, so it's only responsibility is to periodically call a "task": an object containing async `run` function with some retry logic parameters.
+- The `TaskerService` is a glue layer between `SchedulerService` a **vendors**. It is responsible for calling a vendor (fetching the data) and saving results to the DB. `TaskerService` can also be used to schedule cleanup stale data. Not implemented, though.
+- Web API: a basic select from the DB, roughtly: `SELECT * FROM tickets WHERE bestBefore > now()`. This is how we make sure that no stale data is returned to the client. Result is cached with a TTL of minimal `bestBefore - now()`.
+- `bestBefore` is also returned in the response, so the client can decide whether it needs to refresh the data or not if it becomes stale since the request is made.
 
 # Response time
 
 An excerpt from logs:
 
+All items:
+
 ```
-[Nest] 23514  - 03/10/2024, 11:27:33 PM     LOG [NestApplication] Nest application successfully started +2ms
-[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [TicketStorageService: ltm34t1d.7p] Read 8 flights
-[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [RootController] Read all 8 tickets. Min bestBefore: 2024-03-10T23:27:33.003Z
-[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [RootController] [all-tickets] Setting cache for 3578861 ms, until: 2024-03-10T23:27:33.003Z. Response time: 10.111 ms.
-[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [RootController] [all-tickets] Read from cache. Response time: 0.313 ms.
-[Nest] 23514  - 03/10/2024, 11:27:54 PM VERBOSE [RootController] [all-tickets] Read from cache. Response time: 0.164 ms.
-[Nest] 23514  - 03/10/2024, 11:27:57 PM VERBOSE [RootController] Read ticket 456d42825f.
-[Nest] 23514  - 03/10/2024, 11:27:57 PM VERBOSE [RootController] [ticket/456d42825f] Setting cache for 3575026 ms, until: 2024-03-10T23:27:33.013Z. Response time: 2.654 ms.
-[Nest] 23514  - 03/10/2024, 11:27:58 PM VERBOSE [RootController] [ticket/456d42825f] Read from cache. Response time: 0.060 ms.
-[Nest] 23514  - 03/10/2024, 11:27:58 PM VERBOSE [RootController] [ticket/456d42825f] Read from cache. Response time: 0.038 ms.
-[Nest] 23514  - 03/10/2024, 11:27:58 PM VERBOSE [RootController] [ticket/456d42825f] Read from cache. Response time: 0.055 ms.
+VERBOSE [RootController] [all-tickets] Setting cache for 3578861 ms, until: 2024-03-10T23:27:33.003Z. Response time: 10.111 ms.
+VERBOSE [RootController] [all-tickets] Read from cache. Response time: 0.313 ms.
+VERBOSE [RootController] [all-tickets] Read from cache. Response time: 0.164 ms.
 ```
 
-These are "internal" times. For the end-user it adds 5 to 15 ms. With "cold" cache, it's around 30 ms on my laptop.
+One item
+
+```
+VERBOSE [RootController] Read ticket 456d42825f.
+VERBOSE [RootController] [ticket/456d42825f] Setting cache for 3575026 ms, until: 2024-03-10T23:27:33.013Z. Response time: 2.654 ms.
+VERBOSE [RootController] [ticket/456d42825f] Read from cache. Response time: 0.060 ms.
+VERBOSE [RootController] [ticket/456d42825f] Read from cache. Response time: 0.038 ms.
+```
+
+These are "internal" times. For the end-user it adds 5 to 15 ms. With "cold" cache, it's around 30-40 ms on my laptop.
 
 ## Implementation details
 
 > [!NOTE]
 > It's my first time using NestJS, so some implementation details may be not quite idiomatic or implemented easier.
 
-- SQLite + Prisma => easy to switch to a "real" DB
+**Naming**
 
-**Vendors (extensibility)**
+- flights item → `Ticket`
+- item's `Slice` → `TicketFlight`
 
-TODO: Vendors: tasker.service + `vendorPowerUs` service for "concrete" vendor implementation.
+It's a matter of taste, but to me this sounds a bit more clear.
+
+**Storage**
+
+`Prisma` with `SQLite` → easy to switch to a "real" DB (e.g. Postgres).
 
 **NX**
+
+A monorepo orchestrator.
 
 Currently there is only one "app" and it's `server`.
 NX here is just to show the structure, but it's easy to add more apps, e.g. `web–client`, `mobile-app`, etc or libs: e.g. `vendors`.
 Vendors could be extracted to a separate package for a better separation of concerns.
-All we need is to have an async function, returning a specific type of data. `TaskerService` will handle saving it to the DB.
+All we need is to have an async function, returning a specific type of data. `TaskerService` will handle saving it to the DB and reset the cache.
 
-One more nice feature of the NX is the tasks dependency graph + task cache.
-It's easy to configure task's dependency: e.g. `start` depends on `build`. It also handles a cache to the task, so it's not executed if it's not necessary: if no source is changed and we have it built, it will be ignored.
+One more nice feature of the `NX` is the tasks dependency graph + task cache.
+It's easy to configure task's dependency: e.g. `start` depends on `build`, so one don't need to manually run build. It also handles a cache to the task, so it's not executed if it's not necessary: if no source is changed and we have it built, it will be ignored.
 
 **Cache**
 
 The API that is serving the tickets is simply either reads from cache or fetches the tickets from the DB and then caches them.
-Scheduler also resets the cache after the successful data fetch.
-TODO: cache!
 
 **ID**
 
 An ID is generated as a first 10 chars of `sha1` hash of a string.
 
-For a single flight:
+For a single slice / flight:
 
 - `flight_number`
 - `departure_date_time_utc`
@@ -115,53 +118,36 @@ For a single flight:
 - `destination_name`
 
 For a ticket: a combined data of all flights in the ticket.
+See [normaliseFlightResponse.ts](./apps/server/src/vendorPowerUs/normaliseFlightResponse.ts) for details.
 
 **OpenAPI / Swagger**
 
-Is accessible at http://localhost:3000/api/docs
-
-```ts
-// apps/server/src/vendorPowerUs/normaliseFlightResponse.ts
-const getSliceIdData = (s: PowerUsRespSlice) => [s.flight_number, s.departure_date_time_utc, s.origin_name, s.destination_name];
-
-export const createTicketFlightId = (s: PowerUsRespSlice): string => createId(getSliceIdData(s).join("\n"));
-
-export const createTicketId = (data: PowerUsRespFlight): string => {
-  const allIdData = data.slices.flatMap(getSliceIdData).join("\n");
-  return createId(allIdData);
-};
-```
-
-**Naming**
-
-- `Item` -> `Ticket`
-- `Slice` -> `TicketFlight`
-
-It's a matter of taste, but to me this sounds a bit more clear.
+Is accessible at [/api/docs](http://localhost:3000/api/docs)
 
 **TODO Improvements**
 
-- More tests
-- Publish
-- CI/CD
+- More tests: dockerised postgres or sqlite for tests
+- Collect metrics
+- Use postgres with docker
+- Deployment / publish scripts
+- Extend CI/CD
 - Data cleanup
-- Logger logic / management
+- More detailed logger logic / management
 - Cache:
   - fine-tuned caching (e.g. Redis)
-  - change strategy: cache keys, different cachr service instances, etc.
-- Easier DB switching: `sqlite` for local testing, `postgres` for prod.
+  - update the strategy: cache keys, different cache service instances, etc.
+- DB switching: e.g. `sqlite` for local testing, `postgres` for prod.
+- Cron for scheduler so scheduler can be a separate app
 - Infra management (e.g. Terraform or Pulumi)
 - pre-commit hooks
-- linting
+- better linting / formatting
 - Add / remove / update scheduler tasks dynamically (e.g. via API)
 
-## Alternative implementation
+**Alternative implementation**
 
-There is also an alternative version that is using a simple in-memory storage for the tickets.
-Since it's not very "scalable" and not feasible for a larger number of tickets, it's only available as an "alternative implementation" in the [`mg/no-db`](https://github.com/maxim-grishaev/fly-src/tree/mg/no-db) branch.
-
+There is also an older and more static version that is using a simple in-memory storage for the tickets.
+Since it's not very "scalable" and not feasible for a larger data, it's only available as an "alternative implementation" in the [`mg/no-db`](https://github.com/maxim-grishaev/fly-src/tree/mg/no-db) branch.
 But it's very fast for simple cases, does not require cache, as the storage is itself basically a cache.
-As-is, it returns current dataset within 1.5 to 0.5 ms.
 
 # Original task
 
