@@ -9,9 +9,10 @@
     "seed": "ts-node ./prisma/seed.ts"
   },
   "scripts": {
-    "postinstall": "npm run db:dev",
+    "postinstall": "npm run cpenv:dev && npm run db:dev",
     "build": "nest build",
     "build:prod": "nest build",
+    "cpenv:dev": "cp .env.dev .env",
     "___db": "",
     "db:gen": "prisma generate",
     "db:push": "prisma db push",
