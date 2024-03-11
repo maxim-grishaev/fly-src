@@ -19,12 +19,14 @@ export class SchedulerService implements OnModuleInit {
     await Promise.allSettled(
       this.tasks.map(async task => {
         await this.prefetch(task);
-        this.schedule(task);
+        const reschedule = () => this.schedule(task, reschedule);
+        reschedule();
       }),
     );
   }
 
-  private async runTask(task: AsyncTask) {
+  async runTask(task: AsyncTask) {
+    this.logger.debug(task.message('Run scheduled task...'));
     return await again(task.run, {
       retries: task.schedulerCfg.retryAttempts,
       backoff: task.schedulerCfg.backoffMs ?? undefined,
@@ -32,27 +34,25 @@ export class SchedulerService implements OnModuleInit {
     });
   }
 
-  private async prefetch(task: AsyncTask) {
+  protected async prefetch(task: AsyncTask) {
     this.logger.log(task.message('Prefetch'));
     await this.runTask(task)
       .then(() => this.logger.debug(task.message('Prefetch OK!')))
       .catch(err => this.logger.warn(task.message('Prefetch failed', err)));
   }
 
-  private schedule(task: AsyncTask) {
+  schedule(task: AsyncTask, onEnd: () => void) {
     const update = async () => {
-      this.logger.debug(task.message('Run scheduled task...'));
       await this.runTask(task)
         .then(() => this.logger.log(task.message('Scheduled task OK!')))
         .catch(err =>
           this.logger.warn(task.message('Scheduled task failed', err)),
         )
-        .then(() => this.schedule(task));
+        .then(onEnd);
     };
 
-    this.logger.verbose(
-      task.message('Schedule task', task.schedulerCfg.refteshAfterMs),
-    );
-    setTimeout(update, task.schedulerCfg.refteshAfterMs);
+    const time = task.schedulerCfg.refteshAfterMs;
+    this.logger.verbose(task.message('Schedule task', time));
+    return setTimeout(update, time);
   }
 }

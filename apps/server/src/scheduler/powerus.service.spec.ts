@@ -4,12 +4,7 @@ import * as pfs from '../vendorPowerUs/fetchSource';
 
 jest.spyOn(pfs, 'fetchSource').mockResolvedValue({ flights: [] });
 
-const nowOrig = Date.now;
-const mockNow = jest.fn().mockReturnValue(123);
-Date.now = mockNow;
-afterAll(() => {
-  Date.now = nowOrig;
-});
+jest.useFakeTimers({ now: 123 });
 
 describe(PowerusService.name, () => {
   let service: PowerusService;

@@ -11,11 +11,7 @@ describe('normaliseResponse', () => {
   });
 });
 
-const nowOrig = Date.now;
-Date.now = () => 123;
-afterAll(() => {
-  Date.now = nowOrig;
-});
+jest.useFakeTimers({ now: 123 });
 
 describe('normaliseFlight', () => {
   it('should normalise the response', () => {

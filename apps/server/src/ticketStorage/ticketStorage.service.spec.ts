@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TicketStorageService } from './ticketStorage.service';
-import { mockDateNow } from '../lib/mockDateNow';
 import { Currency } from '../model/Currency';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -26,7 +25,7 @@ const MockPrismaService = {
   ticketFlight: MockTicketFlightTable,
 } satisfies Partial<PrismaService>;
 
-const mockNow = mockDateNow(1);
+jest.useFakeTimers({ now: 1 });
 
 type TicketWithFlights = Prisma.TicketGetPayload<{
   include: { flights: true };
@@ -75,7 +74,7 @@ describe('TicketStorageService', () => {
       createTicket('1', 10), // should expire
       createTicket('2', 2000),
     ]);
-    mockNow.mockReturnValue(1000);
+    jest.useFakeTimers({ now: 1000 });
 
     await service.readAllValid();
 
