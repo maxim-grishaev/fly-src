@@ -4,10 +4,10 @@ import {
   getId,
   selectFromIdTable,
   writeToIdTable,
-} from './createIdTableByArray';
+} from '../lib/createIdTableByArray';
 import { SerializeOptions, Type } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { ApiDict } from '../model/api.decorators';
+import { ApiDict } from './api.decorators';
 
 @SerializeOptions({ strategy: 'excludeAll' })
 export class APIIdTable<T, ID extends keyof any> {

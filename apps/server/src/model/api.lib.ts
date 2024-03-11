@@ -1,13 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from '@nestjs/common';
-import { Exclude } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { ApiDateProp } from './api.decorators';
 
 export class APIItem<T> {
-  @Exclude()
-  protected _d: T;
+  #d: T;
   constructor(d: T) {
-    this._d = d;
+    this.#d = d;
+  }
+  get _d() {
+    return this.#d;
   }
 }
 
@@ -26,6 +28,7 @@ export class APIDevData extends APIItem<{
     });
   }
 
+  @Expose()
   @ApiProperty({
     description: [
       'The performance of the response in milliseconds.',
@@ -36,6 +39,7 @@ export class APIDevData extends APIItem<{
   })
   perf = this._d.respDuration;
 
+  @Expose()
   @ApiDateProp('The current server time')
   now = this._d.now;
 }
@@ -50,7 +54,6 @@ export class APIOkWithMeta<
 > extends APIItem<T> {
   static swagger = <T extends Type<unknown>>(it: T) => {
     class APIOkWithMetaOfT extends APIOkWithMeta<any> {
-      _d: any;
       @ApiProperty({
         title: it.name,
         description: 'The response data',

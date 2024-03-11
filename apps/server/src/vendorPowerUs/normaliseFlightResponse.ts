@@ -1,11 +1,13 @@
-import { Ticket, TicketFlight } from '../model/ticket.type';
 import { createId } from '../lib/createId';
-import { toMonetary } from '../lib/toMonetary';
 import {
   PowerUsResp,
   PowerUsRespFlight,
   PowerUsRespSlice,
 } from './powerus.types';
+import { APITicket } from '../model/APITicket';
+import { APIMonetary } from '../model/APIMonetary';
+import { APITicketFlight } from '../model/APITicketFlight';
+import { MAIN_CURRENCY } from '../model/Currency';
 
 const getSliceIdData = (s: PowerUsRespSlice) => [
   s.flight_number,
@@ -22,31 +24,36 @@ export const createTicketId = (data: PowerUsRespFlight): string => {
   return createId(allIdData);
 };
 
-export const normaliseTicketFlight = (
-  slice: PowerUsRespSlice,
-): TicketFlight => ({
-  id: createTicketFlightId(slice),
-  fromPlace: slice.origin_name,
-  fromTime: slice.departure_date_time_utc,
-  toPlace: slice.destination_name,
-  toTime: slice.arrival_date_time_utc,
-  flightDuration: slice.duration,
-  flightNumber: slice.flight_number,
-});
+export const normaliseTicketFlight = (slice: PowerUsRespSlice) =>
+  APITicketFlight.create({
+    id: createTicketFlightId(slice),
+    fromPlace: slice.origin_name,
+    fromTime: new Date(slice.departure_date_time_utc),
+    toPlace: slice.destination_name,
+    toTime: new Date(slice.arrival_date_time_utc),
+    flightDuration: slice.duration,
+    flightNumber: slice.flight_number,
+  });
 
+// Should sort?
+const toTime = (date: string | number) => new Date(date).getTime();
 export const normaliseTicket = (
   ticket: PowerUsRespFlight,
   cacheTTL: number,
-): Ticket => ({
-  vendorId: 'powerUs',
-  id: createTicketId(ticket),
-  price: toMonetary(ticket.price, 'EUR'),
-  flights: ticket.slices.map(normaliseTicketFlight),
-  staleAfter: new Date(Date.now() + cacheTTL).toISOString(),
-  cacheTTLMs: cacheTTL,
-});
+) => {
+  ticket.slices.sort(
+    (a, b) =>
+      toTime(a.departure_date_time_utc) - toTime(b.departure_date_time_utc),
+  );
+  return APITicket.create({
+    vendorId: 'powerUs',
+    id: createTicketId(ticket),
+    price: APIMonetary.create(ticket.price, MAIN_CURRENCY),
+    flights: ticket.slices.map(normaliseTicketFlight),
+    bestBefore: new Date(Date.now() + cacheTTL),
+    cacheTTLMs: cacheTTL,
+  });
+};
 
-export const normaliseFlightResponse = (
-  data: PowerUsResp,
-  cacheTTL: number,
-): Ticket[] => data.flights.flatMap(item => normaliseTicket(item, cacheTTL));
+export const normaliseFlightResponse = (data: PowerUsResp, cacheTTL: number) =>
+  data.flights.flatMap(item => normaliseTicket(item, cacheTTL));
