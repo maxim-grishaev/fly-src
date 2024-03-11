@@ -25,28 +25,28 @@ model TicketFlight {
 }
 
 model Ticket {
-  id              String         @id
-  priceAmout      Decimal
-  priceCurrency   String
-  vendorId        String
-  vendor          Vendor         @relation(fields: [vendorId], references: [id])
+  id            String         @id
+  priceAmout    Decimal
+  priceCurrency String
+  vendorId      String
+  vendor        Vendor         @relation(fields: [vendorId], references: [id])
   // priceCurrency   Currency       @relation(fields: [priceCurrencyId], references: [id])
   // priceCurrencyId String
-  flights         TicketFlight[]
-  cacheTTLMs      Int
-  bestBefore      DateTime
-  fetchedAt       DateTime       @default(now())
+  flights       TicketFlight[]
+  cacheTTLMs    Int
+  bestBefore    DateTime
+  fetchedAt     DateTime       @default(now())
 }
 
+// TODO: add currency model (instead of string/enum)
 // model Currency {
 //   id          String  @id
 //   prescision  Int     @default(2)
 //   Ticket     Ticket[]
 // }
 
-model Task {
+model SchedulerTask {
   id             Int          @id @default(autoincrement())
-  cacheTTL       Int
   refteshAfterMs Int
   retryAttempts  Int
   backoffMs      Int?
@@ -57,15 +57,16 @@ model Task {
 }
 
 model Vendor {
-  id          String @id
+  id          String          @id
   description String
-  tasks       Task[]
+  tasks       SchedulerTask[]
   tickets     Ticket[]
 }
 
 model PowerusTask {
-  id     Int    @id @default(autoincrement())
-  taskId Int    @unique
-  task   Task   @relation(fields: [taskId], references: [id])
-  url    String @unique
+  id            Int           @id @default(autoincrement())
+  taskId        Int           @unique
+  schedulerTask SchedulerTask @relation(fields: [taskId], references: [id])
+  url           String        @unique
+  cacheTTL      Int
 }

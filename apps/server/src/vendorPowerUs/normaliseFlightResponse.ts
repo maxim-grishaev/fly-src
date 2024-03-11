@@ -35,8 +35,17 @@ export const normaliseTicketFlight = (slice: PowerUsRespSlice) =>
     flightNumber: slice.flight_number,
   });
 
-export const normaliseTicket = (ticket: PowerUsRespFlight, cacheTTL: number) =>
-  APITicket.create({
+// Should sort?
+const toTime = (date: string | number) => new Date(date).getTime();
+export const normaliseTicket = (
+  ticket: PowerUsRespFlight,
+  cacheTTL: number,
+) => {
+  ticket.slices.sort(
+    (a, b) =>
+      toTime(a.departure_date_time_utc) - toTime(b.departure_date_time_utc),
+  );
+  return APITicket.create({
     vendorId: 'powerUs',
     id: createTicketId(ticket),
     price: APIMonetary.create(ticket.price, MAIN_CURRENCY),
@@ -44,6 +53,7 @@ export const normaliseTicket = (ticket: PowerUsRespFlight, cacheTTL: number) =>
     bestBefore: new Date(Date.now() + cacheTTL),
     cacheTTLMs: cacheTTL,
   });
+};
 
 export const normaliseFlightResponse = (data: PowerUsResp, cacheTTL: number) =>
   data.flights.flatMap(item => normaliseTicket(item, cacheTTL));

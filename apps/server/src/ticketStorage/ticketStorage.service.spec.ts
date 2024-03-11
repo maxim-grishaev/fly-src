@@ -28,23 +28,19 @@ const MockPrismaService = {
 
 const mockNow = mockDateNow(1);
 
-const createTicket = (
-  id: string,
-  bestBefore: number,
-): Prisma.TicketCreateInput & {
-  flights: Prisma.TicketFlightCreateInput[];
-} => {
-  return {
-    id,
-    priceAmout: new Prisma.Decimal(100),
-    priceCurrency: Currency.Eur,
-    cacheTTLMs: 0,
-    bestBefore: new Date(bestBefore),
-    flights: [],
-    // @ts-expect-error not a real thing
-    vendor: null,
-  };
-};
+type TicketWithFlights = Prisma.TicketGetPayload<{
+  include: { flights: true };
+}>;
+const createTicket = (id: string, bestBefore: number): TicketWithFlights => ({
+  id,
+  priceAmout: new Prisma.Decimal(100),
+  priceCurrency: Currency.Eur,
+  cacheTTLMs: 0,
+  bestBefore: new Date(bestBefore),
+  flights: [],
+  vendorId: '1',
+  fetchedAt: new Date(0),
+});
 
 describe('TicketStorageService', () => {
   let service: TicketStorageService;

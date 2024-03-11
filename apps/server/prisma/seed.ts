@@ -39,10 +39,10 @@ async function main() {
       const newPwrTask = await prisma.powerusTask.create({
         data: {
           url,
-          task: {
+          cacheTTL: 1000 * 60 * 60, // 1 hour = 60*60*1000
+          schedulerTask: {
             create: {
               vendorId: PWR_ID,
-              cacheTTL: 1000 * 60 * 60, // 1 hour = 60*60*1000
               refteshAfterMs: 3300000, // 55 min = 3600000 - 5*60*1000
               retryAttempts: 2,
             },

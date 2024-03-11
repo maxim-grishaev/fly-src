@@ -5,6 +5,7 @@ import { PrismaService } from './prisma.service';
 @Module({
   controllers: [],
   providers: [TicketStorageService, PrismaService],
-  exports: [TicketStorageService],
+  // TODO exrtact Prisma to a separate module
+  exports: [TicketStorageService, PrismaService],
 })
 export class TicketStorageModule {}

@@ -1,9 +1,4 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import {
-  ConcreteVensdorConfig,
-  getVendorConfig,
-} from '../config/configuration';
-import { mergeConfig } from '../config/mergeConfig';
 import { again } from '../lib/again';
 import { AsyncTask, TaskerService } from './tasker.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -11,7 +6,7 @@ import { Cache } from 'cache-manager';
 
 @Injectable()
 export class SchedulerService implements OnModuleInit {
-  private cfg = mergeConfig(getVendorConfig());
+  private tasks: AsyncTask[] = [];
   private readonly logger: Logger;
 
   constructor(
@@ -25,50 +20,47 @@ export class SchedulerService implements OnModuleInit {
    * Fetches flights from all vendors and schedules future fetches
    */
   async onModuleInit() {
-    this.logger.log('onModuleInit', SchedulerService.name);
-
+    this.tasks = await this.taskSvc.selectTasks();
     await Promise.allSettled(
-      this.cfg.map((cfg, idx) => this.initAsyncTaskByCfg(cfg, idx)),
+      this.tasks.map(async task => {
+        await this.prefetch(task);
+        this.schedule(task);
+      }),
     );
-  }
-
-  /**
-   * Fetches flights one cofig from one config item and schedules future fetches
-   */
-  private async initAsyncTaskByCfg(cfg: ConcreteVensdorConfig, idx: number) {
-    const task = this.taskSvc.createAsyncTask(cfg, idx);
-    await this.prefetch(task);
-    this.schedule(task);
   }
 
   private async runTask(task: AsyncTask) {
     return await again(task.run, {
-      retries: task.cfg.retryAttempts,
-      backoff: task.cfg.backoffMs,
-      timeout: task.cfg.timeoutMs,
+      retries: task.schedulerCfg.retryAttempts,
+      backoff: task.schedulerCfg.backoffMs ?? undefined,
+      timeout: task.schedulerCfg.timeoutMs ?? undefined,
     });
   }
 
   private async prefetch(task: AsyncTask) {
-    this.logger.log(task.msg('Prefetch'));
+    this.logger.log(task.message('Prefetch'));
     await this.runTask(task)
-      .then(() => this.logger.debug(task.msg('Prefetch OK!')))
-      .catch(err => this.logger.warn(task.msg('Prefetch failed', err)));
+      .then(() => this.logger.debug(task.message('Prefetch OK!')))
+      .catch(err => this.logger.warn(task.message('Prefetch failed', err)));
   }
 
   private schedule(task: AsyncTask) {
     const update = async () => {
-      this.logger.debug(task.msg('Run scheduled task...'));
+      this.logger.debug(task.message('Run scheduled task...'));
       await this.runTask(task)
-        .then(() => this.logger.log(task.msg('Scheduled task OK!')))
-        .catch(err => this.logger.warn(task.msg('Scheduled task failed', err)))
+        .then(() => this.logger.log(task.message('Scheduled task OK!')))
+        .catch(err =>
+          this.logger.warn(task.message('Scheduled task failed', err)),
+        )
         // Here we reset the entire cache
         // but better strategy may be implemented, e.g. add cache keys to the task
         .then(() => this.cacheManager.reset())
         .then(() => this.schedule(task));
     };
 
-    this.logger.verbose(task.msg('Schedule task', task.cfg.refteshAfterMs));
-    setTimeout(update, task.cfg.refteshAfterMs);
+    this.logger.verbose(
+      task.message('Schedule task', task.schedulerCfg.refteshAfterMs),
+    );
+    setTimeout(update, task.schedulerCfg.refteshAfterMs);
   }
 }

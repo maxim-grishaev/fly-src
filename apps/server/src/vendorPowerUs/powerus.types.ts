@@ -1,5 +1,3 @@
-import { Vendor } from '../config/config.types';
-
 export interface PowerUsRespError {
   statusCode: number;
   message: string;
@@ -22,9 +20,3 @@ export interface PowerUsRespFlight {
 export interface PowerUsResp {
   flights: PowerUsRespFlight[];
 }
-
-export type PowerUsConfig = Vendor<
-  'powerUs',
-  { url: string },
-  { cacheTTL: number }
->;

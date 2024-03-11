@@ -153,7 +153,7 @@ It's a matter of taste, but to me this sounds a bit more clear.
 - Infra management (e.g. Terraform or Pulumi)
 - pre-commit hooks
 - linting
-- Add / remove vendor items dynamically (e.g. via API)
+- Add / remove / update scheduler tasks dynamically (e.g. via API)
 
 ## Alternative implementation
 

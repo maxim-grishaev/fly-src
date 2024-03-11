@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { APIItem } from './api.lib';
 import { ApiDateProp, ApiIdProp } from './api.decorators';
 import { Prisma } from '@prisma/client';
-import { WithVendorID } from '../config/config.types';
 import { APIMonetary } from './APIMonetary';
 import { APITicketFlight } from './APITicketFlight';
 import { toCurrency } from './Currency';
 import { Exclude } from 'class-transformer';
 
-interface Ticket<V extends string = string> extends WithVendorID<V> {
+interface Ticket<V extends string = string> {
+  vendorId: V;
   id: string;
   price: APIMonetary;
   flights: APITicketFlight[];
