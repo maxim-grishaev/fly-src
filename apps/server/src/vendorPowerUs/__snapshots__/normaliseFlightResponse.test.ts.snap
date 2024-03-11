@@ -25,7 +25,7 @@ exports[`normaliseResponse should normalise response 1`] = `
         "toTime": 2019-08-10T07:35:00.000Z,
       },
     ],
-    "id": "7bc756ad54",
+    "id": "64616c2e89",
     "price": APIMonetary {
       "amount": "129.00",
       "currency": "EUR",
@@ -55,7 +55,7 @@ exports[`normaliseResponse should normalise response 1`] = `
         "toTime": 2019-08-10T08:40:00.000Z,
       },
     ],
-    "id": "e5d7896f5a",
+    "id": "e472a80177",
     "price": APIMonetary {
       "amount": "134.81",
       "currency": "EUR",
@@ -85,7 +85,7 @@ exports[`normaliseResponse should normalise response 1`] = `
         "toTime": 2019-08-10T07:35:00.000Z,
       },
     ],
-    "id": "d3250c730e",
+    "id": "bd06e8b544",
     "price": APIMonetary {
       "amount": "134.81",
       "currency": "EUR",
@@ -115,7 +115,7 @@ exports[`normaliseResponse should normalise response 1`] = `
         "toTime": 2019-08-10T08:40:00.000Z,
       },
     ],
-    "id": "56984df205",
+    "id": "789bc2db9d",
     "price": APIMonetary {
       "amount": "147.90",
       "currency": "EUR",
@@ -145,7 +145,7 @@ exports[`normaliseResponse should normalise response 1`] = `
         "toTime": 2019-08-10T08:40:00.000Z,
       },
     ],
-    "id": "8fa903ad50",
+    "id": "dba770f15e",
     "price": APIMonetary {
       "amount": "147.90",
       "currency": "EUR",

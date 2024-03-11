@@ -4,11 +4,9 @@ import { APITicketFlight } from './APITicketFlight';
 import { Currency } from './Currency';
 
 export const MOCK_TICKET_1 = APITicket.create({
-  id: 't_1',
   vendorId: 'foo',
   flights: [
     APITicketFlight.create({
-      id: 'f_1',
       fromPlace: 'A',
       fromTime: new Date(100),
       toPlace: 'B',
@@ -23,11 +21,9 @@ export const MOCK_TICKET_1 = APITicket.create({
 });
 
 export const MOCK_TICKET_2 = APITicket.create({
-  id: 't_2',
   vendorId: 'bar',
   flights: [
     APITicketFlight.create({
-      id: 'f_2',
       fromPlace: 'B',
       fromTime: new Date(200),
       toPlace: 'A',

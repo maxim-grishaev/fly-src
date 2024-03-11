@@ -1,4 +1,3 @@
-import { createId } from '../lib/createId';
 import {
   PowerUsResp,
   PowerUsRespFlight,
@@ -9,24 +8,8 @@ import { APIMonetary } from '../model/APIMonetary';
 import { APITicketFlight } from '../model/APITicketFlight';
 import { MAIN_CURRENCY } from '../model/Currency';
 
-const getSliceIdData = (s: PowerUsRespSlice) => [
-  s.flight_number,
-  s.departure_date_time_utc,
-  s.origin_name,
-  s.destination_name,
-];
-
-export const createTicketFlightId = (s: PowerUsRespSlice): string =>
-  createId(getSliceIdData(s).join('\n'));
-
-export const createTicketId = (data: PowerUsRespFlight): string => {
-  const allIdData = data.slices.flatMap(getSliceIdData).join('\n');
-  return createId(allIdData);
-};
-
 export const normaliseTicketFlight = (slice: PowerUsRespSlice) =>
   APITicketFlight.create({
-    id: createTicketFlightId(slice),
     fromPlace: slice.origin_name,
     fromTime: new Date(slice.departure_date_time_utc),
     toPlace: slice.destination_name,
@@ -35,25 +18,14 @@ export const normaliseTicketFlight = (slice: PowerUsRespSlice) =>
     flightNumber: slice.flight_number,
   });
 
-// Should sort?
-const toTime = (date: string | number) => new Date(date).getTime();
-export const normaliseTicket = (
-  ticket: PowerUsRespFlight,
-  cacheTTL: number,
-) => {
-  ticket.slices.sort(
-    (a, b) =>
-      toTime(a.departure_date_time_utc) - toTime(b.departure_date_time_utc),
-  );
-  return APITicket.create({
+export const normaliseTicket = (ticket: PowerUsRespFlight, cacheTTL: number) =>
+  APITicket.create({
     vendorId: 'powerUs',
-    id: createTicketId(ticket),
     price: APIMonetary.create(ticket.price, MAIN_CURRENCY),
     flights: ticket.slices.map(normaliseTicketFlight),
     bestBefore: new Date(Date.now() + cacheTTL),
     cacheTTLMs: cacheTTL,
   });
-};
 
 export const normaliseFlightResponse = (data: PowerUsResp, cacheTTL: number) =>
   data.flights.flatMap(item => normaliseTicket(item, cacheTTL));

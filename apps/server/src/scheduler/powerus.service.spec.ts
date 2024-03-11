@@ -48,8 +48,8 @@ describe(PowerusService.name, () => {
         },
       ],
     });
-    await expect(service.fetchSource('abc', 333)).resolves
-      .toMatchInlineSnapshot(`
+    await expect(service.fetchSource('abc', 333)).resolves.
+toMatchInlineSnapshot(`
 [
   APITicket {
     "bestBefore": 1970-01-01T00:00:00.456Z,
@@ -60,7 +60,7 @@ describe(PowerusService.name, () => {
         "flightNumber": "flight_number",
         "fromPlace": "origin_name",
         "fromTime": 2021-01-01T00:00:00.000Z,
-        "id": "776302d17f",
+        "id": "7739a69d01",
         "toPlace": "destination_name",
         "toTime": 2021-01-01T00:00:00.000Z,
       },
@@ -69,12 +69,12 @@ describe(PowerusService.name, () => {
         "flightNumber": "flight_number",
         "fromPlace": "destination_name",
         "fromTime": 2021-02-01T00:00:00.000Z,
-        "id": "a9fd2cb531",
+        "id": "ab2cc37241",
         "toPlace": "origin_name",
         "toTime": 2021-02-01T00:00:00.000Z,
       },
     ],
-    "id": "cbc7dd2f0e",
+    "id": "698ce32e49",
     "price": APIMonetary {
       "amount": "123.00",
       "currency": "EUR",

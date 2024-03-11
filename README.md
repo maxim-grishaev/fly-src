@@ -45,7 +45,7 @@ First time tickets are fetched during the app initialization (`onModuleInit`), a
 The property TTL time is configurable in DB `PowerusTask` table.
 
 - There is a concept of **vendors**: a vendor is a service that fetches the data from a specific source. It's a simple async function that returns an array of `APITicket` items.
-- Currently there is only one vendor: `src/vendorPowerUs`. Vendor also contains all the normalisation logic. Where to keep id generation logic is debatable, but for now it's in the vendor.
+- Currently there is only one vendor: `src/vendorPowerUs`. Vendor also contains all the normalisation logic.
 - `SchedulerService` is quite abstract, so it's only responsibility is to periodically call a "task": an object containing async `run` function with some retry logic parameters.
 - The `TaskerService` is a glue layer between `SchedulerService` a **vendors**. It is responsible for calling a vendor (fetching the data) and saving results to the DB. `TaskerService` can also be used to schedule cleanup stale data. Not implemented, though.
 - Web API: a basic select from the DB, roughtly: `SELECT * FROM tickets WHERE bestBefore > now()`. This is how we make sure that no stale data is returned to the client. Result is cached with a TTL of minimal `bestBefore - now()`.

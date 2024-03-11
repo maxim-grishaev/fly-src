@@ -1,15 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { APIItem } from './api.lib';
 import { ApiDateProp, ApiIdProp } from './api.decorators';
-import { Prisma } from '@prisma/client';
+import { Prisma, TicketFlight } from '@prisma/client';
 import { APIMonetary } from './APIMonetary';
-import { APITicketFlight } from './APITicketFlight';
+import { APITicketFlight, getSliceIdData } from './APITicketFlight';
 import { toCurrency } from './Currency';
 import { Exclude } from 'class-transformer';
+import { createId } from '../lib/createId';
+
+export const createTicketId = (
+  tkt: Ticket<string>,
+  flights: TicketFlight[],
+): string => {
+  const allIdData = flights
+    .flatMap(getSliceIdData)
+    .concat(tkt.vendorId)
+    .join('\n');
+  return createId(allIdData);
+};
 
 interface Ticket<V extends string = string> {
   vendorId: V;
-  id: string;
   price: APIMonetary;
   flights: APITicketFlight[];
   // Not necessary, but assuming cache can have different values
@@ -28,7 +39,6 @@ export class APITicket<V extends string = string>
     tfps: Array<Prisma.$TicketFlightPayload['scalars']>,
   ) =>
     APITicket.create({
-      id: tp.id,
       vendorId: tp.vendorId,
       price: APIMonetary.create(tp.priceAmout, toCurrency(tp.priceCurrency)),
       cacheTTLMs: tp.cacheTTLMs,
@@ -36,7 +46,12 @@ export class APITicket<V extends string = string>
       flights: tfps.map(APITicketFlight.fromPrisma),
     });
 
-  static create = <T extends Ticket<string>>(t: T) => new APITicket(t);
+  static create = <V extends string>(t: Ticket<V>) => {
+    // Noticed that the slices are not sorted by time
+    // If not sorted, there may be unstable ID generation
+    t.flights.sort((a, b) => a.fromTime.getTime() - b.fromTime.getTime());
+    return new APITicket(t);
+  };
 
   toCreateInput(): Prisma.TicketCreateInput {
     return {
@@ -51,7 +66,7 @@ export class APITicket<V extends string = string>
   }
 
   @ApiIdProp('A ticket ID')
-  id = this._d.id;
+  id = createTicketId(this._d, this._d.flights);
 
   @ApiProperty({
     description: 'Price',

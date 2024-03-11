@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ApiDateProp, ApiIdProp } from './api.decorators';
 import { APIItem } from './api.lib';
 import { Prisma } from '@prisma/client';
+import { createId } from '../lib/createId';
 
 interface TicketFlight {
-  id: string;
   fromPlace: string;
   fromTime: Date;
   toPlace: string;
@@ -12,6 +12,9 @@ interface TicketFlight {
   flightDuration: number;
   flightNumber: string;
 }
+
+export const getSliceIdData = (s: TicketFlight) =>
+  [s.flightNumber, s.fromTime.toISOString(), s.fromPlace, s.toPlace].join('\n');
 
 export class APITicketFlight
   extends APIItem<TicketFlight>
@@ -34,7 +37,7 @@ export class APITicketFlight
   }
 
   @ApiIdProp('A ticket flight ID')
-  id = this._d.id;
+  id = createId(getSliceIdData(this._d));
 
   @ApiProperty({
     description: 'Departure place',
