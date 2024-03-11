@@ -9,7 +9,7 @@
     "seed": "ts-node ./prisma/seed.ts"
   },
   "scripts": {
-    "postinstall": "npm run cpenv:dev && npm run db:dev",
+    "postinstall": "npm run cpenv:dev && npm run db:dev && npm run build",
     "build": "nest build",
     "build:prod": "nest build",
     "cpenv:dev": "cp .env.dev .env",

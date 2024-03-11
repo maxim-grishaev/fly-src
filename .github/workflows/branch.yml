@@ -8,7 +8,7 @@ on:
     tags-ignore: ["**"]
 jobs:
   build:
-    name: 🧱 build
+    name: 🚑 Health check (build,lint,test)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

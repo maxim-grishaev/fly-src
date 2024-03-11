@@ -36,7 +36,7 @@ export class AppController {
   ) {}
 
   @Get()
-  @ApiExtraModels(APITicket)
+  @ApiExtraModels(APITicket, APIIdTable)
   @ApiOkResponse({
     type: APIOkWithMeta.swagger(APIIdTable.swagger(APITicket)),
   })

@@ -11,6 +11,7 @@
   "scripts": {
     "build": "nx run-many --all --target=build",
     "test": "nx run-many --all --target=test",
+    "test:e2e": "nx run-many --all --target=test:e2e",
     "lint": "nx run-many --all --target=lint",
     "dev": "nx run @fly-src/server:start:dev",
     "start": "nx run @fly-src/server:start",
