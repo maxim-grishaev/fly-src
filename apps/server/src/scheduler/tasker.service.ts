@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PowerusService } from '../vendorPowerUs/powerus.service';
+import { PowerusService } from './powerus.service';
 import { TicketStorageService } from '../ticketStorage/ticketStorage.service';
 import { Prisma } from '@prisma/client';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';

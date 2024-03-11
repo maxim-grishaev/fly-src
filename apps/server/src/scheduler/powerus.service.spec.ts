@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PowerusService } from './powerus.service';
-import * as pfs from './fetchSource';
+import * as pfs from '../vendorPowerUs/fetchSource';
 
 jest.spyOn(pfs, 'fetchSource').mockResolvedValue({ flights: [] });
 

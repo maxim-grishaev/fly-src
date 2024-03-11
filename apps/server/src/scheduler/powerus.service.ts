@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { fetchSource } from './fetchSource';
-import { normaliseFlightResponse } from './normaliseFlightResponse';
+import { fetchSource } from '../vendorPowerUs/fetchSource';
+import { normaliseFlightResponse } from '../vendorPowerUs/normaliseFlightResponse';
 
 @Injectable()
 export class PowerusService {
