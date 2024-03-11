@@ -16,7 +16,12 @@
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build", "global-config"]
+      "cache": true,
+      "dependsOn": ["^build", "global-config"],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/{projectName}"
+      }
     },
     "start": {
       "dependsOn": ["build"]
@@ -25,10 +30,12 @@
       "dependsOn": ["build"]
     },
     "lint": {
+      "cache": true,
       "dependsOn": ["build", "lint-config"],
       "outputs": []
     },
     "test": {
+      "cache": true,
       "dependsOn": ["build"]
     }
   },
