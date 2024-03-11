@@ -1,9 +1,9 @@
 import { fetchSource } from './fetchSource';
 
-const moskResp = jest.fn().mockResolvedValue({ flights: [] });
+const mockResp = jest.fn().mockResolvedValue({ flights: [] });
 const mockFetch = jest.fn().mockResolvedValue({
   ok: true,
-  json: () => moskResp(),
+  json: () => mockResp(),
 } as Response);
 
 jest.spyOn(global, 'fetch').mockImplementation(() => mockFetch());
@@ -28,7 +28,7 @@ describe('fetchSource', () => {
   });
 
   it('should fail if not valid JSON', async () => {
-    moskResp.mockResolvedValue({ abc: 123 });
+    mockResp.mockResolvedValue({ abc: 123 });
     await expect(
       fetchSource('http://foo.bar'),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
