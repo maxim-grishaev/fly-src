@@ -51,7 +51,7 @@ export class TaskerService {
           message(`Fetched OK! ${data.length} items from ${pwr.url}`),
         );
         // Here we reset the entire cache
-        // but better strategy may be implemented, e.g. add cache keys to the task
+        // but more detailed strategy may be implemented, e.g. add cache keys to the task
         this.cacheManager.reset();
         await this.ticketSvc.writeMany(data);
       },
