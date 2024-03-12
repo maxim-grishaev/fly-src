@@ -62,7 +62,6 @@ The property TTL time is configurable in the DB `PowerusTask` table.
 - `SchedulerService` is quite abstract, so its only responsibility is to periodically call a "task": an object containing async `run` function with some retry logic parameters.
 - The `TaskerService` is a glue layer between `SchedulerService` and **vendors**. It is responsible for calling a vendor (fetching the data) and saving results to the DB. `TaskerService` can also be used to schedule cleanup stale data. Not implemented, though.
 - Web API: a basic select from the DB, roughly: `SELECT * FROM tickets WHERE bestBefore > now()`. This is how we make sure that no stale data is returned to the client. The result is cached with a TTL of minimal `bestBefore - now()`.
-- `bestBefore` is also returned in the response, so the client can decide whether it needs to refresh the data or not if it becomes stale since the request is made.
 
 # Response time
 
@@ -98,6 +97,12 @@ These are "internal" times. For the end-user, it adds 5 to 15 ms. With a "cold" 
 - item's `Slice` → `TicketFlight`
 
 It's a matter of taste, but to me, this sounds a bit more clear.
+
+**Response shape**
+
+- `APIOkWithMeta` → a generic response shape with a `meta` object and a `data` object. Standadizes the response shape, so some generic logic can be applied to all responses: e.g. csr tokens, metrics, api version, heartbeat, timings.
+- `APIIdTable` → a generic response shape for a list of items with an ID. It's easier to work with and to avoid duplicates.
+- `APITicket.bestBefore` is returned in the response, so the client can decide whether it needs to refresh the data or not if it becomes stale since the request is made.
 
 **Storage**
 
@@ -138,6 +143,17 @@ See [normaliseFlightResponse.ts](./apps/server/src/vendorPowerUs/normaliseFlight
 Available at [/api/docs](http://localhost:3000/api/docs)
 
 **TODO Improvements**
+
+- Normalise response shape: extract flights / vendors into a separate `APIIdTable`, so it's easier to search through the flights.
+  Example:
+
+  ```ts
+  APIOkWithMeta<{
+    flights: APIIdTable<APITicketFlight>,
+    tickets: APIIdTable<APITicket>,
+    vendors: APIIdTable<...some vendor data...>,
+  }>
+  ```
 
 - More tests: dockerised Postgres or SQLite for tests for real SQL queries, add e2e in CI, etc.
 - Collect metrics
